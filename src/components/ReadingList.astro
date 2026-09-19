@@ -1,0 +1,78 @@
+---
+---
+<button class="reading-list-toggle" id="reading-list-toggle" type="button" aria-label="打开稍后读" aria-haspopup="dialog" aria-controls="reading-list-dialog">
+  <svg width="19" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z" /></svg>
+  <span class="reading-badge" id="reading-list-count" hidden>0</span>
+</button>
+<dialog class="reading-list-dialog" id="reading-list-dialog" aria-labelledby="reading-list-title" data-pagefind-ignore>
+  <div class="list-heading"><h2 id="reading-list-title">📑 稍后读</h2><button class="hand-btn small" id="reading-list-close" type="button">关闭</button></div>
+  <p class="meta" data-storage-note>仅保存在当前浏览器，不同步账号。</p>
+  <ul id="reading-list-items" class="reading-list-items"></ul>
+  <p id="reading-list-empty" class="muted">还没有收藏。在资料快览或文章页点击“加入稍后读”。</p>
+  <p class="sr-only" id="reading-list-announcement" aria-live="polite"></p>
+</dialog>
+<style>
+  .reading-list-toggle { display:inline-grid;place-items:center;position:relative;width:2.4rem;height:2.4rem;flex-shrink:0;border:2px solid var(--pencil);border-radius:var(--radius-wobble-sm);background:var(--paper-2);box-shadow:var(--shadow-hand-sm); }
+  .reading-list-toggle:hover { background:var(--postit); }
+  .reading-badge { position:absolute;right:-.4rem;top:-.5rem;min-width:1.2rem;padding:0 .2rem;background:var(--pen);color:var(--paper);border-radius:1rem;font:700 .65rem/1.3rem var(--font-heading); }
+  .reading-badge[hidden] { display:none; }
+  .reading-list-dialog { width:min(40rem,calc(100% - 2rem));max-height:80dvh;padding:1.4rem;background:var(--paper-2);color:var(--pencil);border:2px solid var(--pencil);border-radius:var(--radius-wobble-sm);box-shadow:var(--shadow-hand); }
+  .reading-list-dialog::backdrop { background:color-mix(in srgb,var(--pencil) 35%,transparent);backdrop-filter:blur(3px); }
+  .list-heading { display:flex;align-items:center;justify-content:space-between;gap:1rem; }
+  .list-heading h2 { margin:0;font-size:1.5rem; }
+  .reading-list-items { list-style:none;margin:1rem 0 0;padding:0; }
+  .reading-list-items :global(li) { display:flex;gap:1rem;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px dashed var(--pencil-25); }
+  .reading-list-items :global(a) { display:block;color:var(--pen);font-weight:700;overflow-wrap:anywhere; }
+  .reading-list-items :global(button) { flex-shrink:0; }
+  .reading-list-items :global(.saved-section) { display:block;font-size:.8rem;color:var(--pencil-60); }
+  .reading-list-dialog [hidden] { display:none; }
+</style>
+<script>
+  import { withBase } from '../utils/url';
+  import { initReadingActions, readingStore, notifyReadingChange } from '../scripts/reading';
+  initReadingActions();
+  let cleanup: (() => void) | undefined;
+  function bindReadingList() {
+    cleanup?.();
+    const trigger = document.getElementById('reading-list-toggle');
+    const dialog = document.getElementById('reading-list-dialog') as HTMLDialogElement | null;
+    const list = document.getElementById('reading-list-items');
+    const count = document.getElementById('reading-list-count');
+    const empty = document.getElementById('reading-list-empty');
+    const announcement = document.getElementById('reading-list-announcement');
+    if (!trigger || !dialog || !list || !count || !empty || !announcement) return;
+    const controller = new AbortController(), { signal } = controller;
+    function render() {
+      const entries = readingStore.read().bookmarks;
+      count!.hidden = entries.length === 0;
+      count!.textContent = entries.length > 99 ? '99+' : String(entries.length);
+      trigger!.setAttribute('aria-label', `打开稍后读，${entries.length} 项`);
+      empty!.hidden = entries.length > 0;
+      list!.replaceChildren();
+      entries.forEach(entry => {
+        const li = document.createElement('li');
+        const text = document.createElement('div');
+        const section = document.createElement('span');
+        section.className = 'saved-section'; section.textContent = entry.section;
+        const link = document.createElement('a'); link.href = withBase(entry.path); link.textContent = entry.title;
+        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'hand-btn small'; remove.textContent = '移除'; remove.setAttribute('aria-label', `移除：${entry.title}`);
+        remove.addEventListener('click', () => {
+          readingStore.removeBookmark(entry.path); notifyReadingChange();
+          announcement!.textContent = `已移除 ${entry.title}`;
+          (list!.querySelector('button') as HTMLButtonElement | null)?.focus();
+          if (!list!.children.length) document.getElementById('reading-list-close')?.focus();
+        });
+        text.append(section, link); li.append(text, remove); list!.append(li);
+      });
+    }
+    render();
+    trigger.addEventListener('click', () => { render(); dialog.showModal(); }, { signal });
+    document.getElementById('reading-list-close')?.addEventListener('click', () => dialog.close(), { signal });
+    dialog.addEventListener('click', event => { if (event.target === dialog) { const r = dialog.getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) dialog.close(); } }, { signal });
+    document.addEventListener('reading:change', render, { signal });
+    cleanup = () => { dialog.close(); controller.abort(); };
+    document.addEventListener('astro:before-swap', cleanup, { once:true, signal });
+  }
+  bindReadingList();
+  document.addEventListener('astro:page-load', bindReadingList);
+</script>
