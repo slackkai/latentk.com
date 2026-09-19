@@ -4,13 +4,13 @@ date: 2026-06-01
 description: '这是一条“发表”类型的示例条目，用于展示 venue / links / bibtex 字段。'
 kind: paper
 venue: 'ICML 2026'
-authors: ['Example Author', 'Coauthor A', 'Coauthor B']
+authors: ['Kai', 'Coauthor A', 'Coauthor B']
 year: 2026
 tags: ['publication']
 bibtex: |
-  @inproceedings{example2026,
+  @inproceedings{kai2026example,
     title={An Example Paper},
-    author={Example Author and A and B},
+    author={Kai and A and B},
     booktitle={ICML},
     year={2026}
   }

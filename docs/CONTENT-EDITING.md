@@ -2,9 +2,11 @@
 
 ## 线上编辑（推荐）
 
-后台入口是网站地址后面的 `admin/`。主题演示的入口是：
+后台入口是网站地址后面的 `admin/`。LatentK 个人站的入口是：
 
-<https://slackkai.github.io/astro-margin-notes/admin/>
+<https://slackkai.github.io/latentk.com/admin/>
+
+这个后台保存到 `slackkai/latentk.com`，不会修改 `astro-margin-notes` 主题仓库。自定义域名接入后，入口改为 <https://latentk.com/admin/>。
 
 1. 第一次使用，点击 **Sign In Using Access Token**。在 GitHub 创建 fine-grained personal access token：只选择你要编辑的仓库，授予 **Contents: Read and write**，设置到期时间。Metadata 读取权限会自动附带。将 token 粘贴到后台登录框；不要写入代码、文章或发到聊天里。
 2. 选择“学术 / 洞见 / 日常 / 资料库 / 项目”，点击 **Create New Entry**。

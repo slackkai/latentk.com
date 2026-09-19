@@ -4,7 +4,8 @@ import { parse } from 'parse5';
 
 const root = resolve('dist');
 const base = (process.env.BASE_PATH || '/').replace(/\/$/, '');
-const site = new URL(process.env.SITE_URL || 'https://example.com');
+const settings = JSON.parse(await readFile(new URL('../src/data/site.json', import.meta.url), 'utf8'));
+const site = new URL(process.env.SITE_URL || settings.url);
 const errors = [];
 const pages = new Map();
 async function walk(dir) {

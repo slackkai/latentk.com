@@ -1,5 +1,5 @@
 {
-  "name": "astro-margin-notes",
+  "name": "latentk-site",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -35,7 +35,7 @@
     "parse5": "^8.0.1",
     "typescript": "^5.0.0"
   },
-  "description": "A hand-drawn notebook Astro theme with a Git-based visual CMS and GitHub Pages deployment.",
+  "description": "LatentK — Kai 的个人站点：学术、洞见、日常、资料库与项目。",
   "license": "MIT",
   "engines": {
     "node": ">=22.12.0"

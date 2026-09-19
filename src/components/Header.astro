@@ -8,7 +8,7 @@ import Search from './Search.astro';
 
 const path = Astro.url.pathname;
 const isActive = (href: string) => (href === '/' ? path === withBase('/') : path.startsWith(withBase(href)));
-const mark = SITE.title.trim().charAt(0).toUpperCase() || '•';
+const mark = SITE.author.trim().charAt(0).toUpperCase() || 'K';
 ---
 
 <header class="site-header" data-pagefind-ignore>

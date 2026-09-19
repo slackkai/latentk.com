@@ -9,7 +9,7 @@ if (!repo) {
     repo = remote.match(/github\.com[:/]([^/]+\/[^/]+?)(?:\.git)?$/)?.[1];
   } catch { /* An unconnected template can still be edited locally. */ }
 }
-repo ||= 'slackkai/astro-margin-notes';
+repo ||= 'slackkai/latentk.com';
 const site = JSON.parse(await readFile(new URL('../src/data/site.json', import.meta.url), 'utf8'));
 const config = makeCmsConfig({ repo, siteUrl: process.env.SITE_URL || site.url, base: process.env.BASE_PATH || '/' });
 await mkdir('public/admin/vendor', { recursive: true });

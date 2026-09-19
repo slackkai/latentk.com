@@ -30,12 +30,12 @@ export const config = {
    * （页面文件仍在，若要彻底移除可删除 src/pages/<key> 与 src/content/<key>）。
    */
   sections: {
-    academic: { enabled: true, emoji: '🎓', label: 'Academic', subtitle: '学术', desc: '论文笔记、研究记录与发表。' },
-    insight: { enabled: true, emoji: '✍️', label: 'Insight', subtitle: '洞见', desc: '长文、观点与方法论。' },
-    dailies: { enabled: true, emoji: '📸', label: 'Dailies', subtitle: '日常', desc: '碎碎念、日志与生活切片。' },
-    library: { enabled: true, emoji: '📚', label: 'Library', subtitle: '资料库', desc: '书、论文、工具与链接的收藏架。' },
-    projects: { enabled: true, emoji: '🛠️', label: 'Projects', subtitle: '项目', desc: '正在做和做过的东西。' },
-  } satisfies Record<SectionKey, { enabled: boolean; emoji: string; label: string; subtitle: string; desc: string }>,
+    academic: { enabled: true, emoji: '🎓', label: 'Academic', subtitle: '学术', desc: '论文笔记、研究记录与发表。', rotate: '-1deg' },
+    insight: { enabled: true, emoji: '✍️', label: 'Insight', subtitle: '洞见', desc: '长文、观点与方法论。', rotate: '1deg' },
+    dailies: { enabled: true, emoji: '📸', label: 'Dailies', subtitle: '日常', desc: '碎碎念、日志与生活切片。', rotate: '-0.5deg' },
+    library: { enabled: true, emoji: '📚', label: 'Library', subtitle: '资料库', desc: '书、论文、工具与链接的收藏架。', rotate: '0.7deg' },
+    projects: { enabled: true, emoji: '🛠️', label: 'Projects', subtitle: '项目', desc: '机器人、软件与硬件项目。', rotate: '-0.7deg' },
+  } satisfies Record<SectionKey, { enabled: boolean; emoji: string; label: string; subtitle: string; desc: string; rotate: string }>,
 
   /** 导航栏：Home + 已启用板块 + 下面这些 */
   navExtra: [
@@ -63,7 +63,7 @@ export const config = {
     /** 'arm' 手绘机械臂（逆运动学跟随鼠标）| 'doodle' 一根涂鸦线条 */
     hero: 'arm' as 'arm' | 'doodle',
     /** 标题上方的便利贴文字，留空不显示 */
-    badge: '🎉 欢迎光临～',
+    badge: '🤖 具身 · embodied',
     /** 机械臂在无鼠标时是否自己活动 */
     armIdle: true,
   },
@@ -71,9 +71,9 @@ export const config = {
   academic: {
     /** Academic 页顶部的研究方向卡片，空数组则不显示 */
     topics: [
-      { emoji: '🔬', title: '方向一', desc: '一句话说明这个方向在做什么。' },
-      { emoji: '🧭', title: '方向二', desc: '一句话说明这个方向在做什么。' },
-      { emoji: '🧩', title: '方向三', desc: '一句话说明这个方向在做什么。' },
+      { emoji: '🦾', title: '机器人学习', desc: '让机器人从数据和交互中学会技能，而不是靠人手写控制律。' },
+      { emoji: '🧠', title: '具身智能', desc: '感知、决策与动作在同一个身体里闭环。' },
+      { emoji: '🔁', title: 'Sim-to-Real', desc: '在仿真里训练，在真实世界里成立。' },
     ],
   },
 
@@ -81,21 +81,34 @@ export const config = {
     /** 关于页底部的工作台，设为 null 则不显示 */
     workbench: {
       tools: [
-        { name: 'VS Code', note: '写代码' },
+        { name: 'Isaac Lab', note: '仿真训练主力' },
+        { name: 'MuJoCo', note: '快速验证动力学' },
+        { name: 'ROS 2', note: '真机通信' },
         { name: 'Zotero', note: '文献' },
         { name: 'Obsidian', note: '笔记' },
       ],
       hardware: [
-        { name: '一台笔记本', note: '主力机' },
-        { name: '一副耳机', note: '专注' },
+        { name: 'Unitree Go2', note: '四足实验平台' },
+        { name: 'RealSense D435', note: '深度相机' },
+        { name: '4090 工作站', note: '训练' },
       ],
-      questions: ['最近在追的第一个问题？', '第二个问题？', '第三个问题？'],
+      questions: [
+        '仿真与真机之间，到底是哪些差距最要命？',
+        '机器人需要"记忆"吗，还是反应式策略就够了？',
+        '一个策略能不能同时会走路和会抓东西？',
+      ],
     } as null | { tools: { name: string; note: string }[]; hardware: { name: string; note: string }[]; questions: string[] },
   },
 
   footer: {
     /** 页脚随机结束语，空数组则不显示 */
-    signoffs: ['今天也把想法留在纸上了。', '写下来，才知道自己没想清楚。', '读到这里，起来动一动。'],
+    signoffs: [
+      '今天也把想法留在纸上了。',
+      '读到这里，起来动一动身体。',
+      '机器人还在学走路，我也是。',
+      '仿真里成立的，去真实世界试试。',
+      '写下来，才知道自己没想清楚。',
+    ],
   },
 
   guestbook: {
@@ -113,7 +126,7 @@ export const config = {
 
 export const SITE = config.site;
 
-export type SectionMeta = { key: SectionKey; label: string; subtitle: string; href: string; emoji: string; desc: string };
+export type SectionMeta = { key: SectionKey; label: string; subtitle: string; href: string; emoji: string; desc: string; rotate: string };
 
 const ALL_SECTIONS = (Object.keys(config.sections) as SectionKey[]).map<SectionMeta & { enabled: boolean }>((key) => ({
   key,
