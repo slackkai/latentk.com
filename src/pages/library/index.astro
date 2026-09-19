@@ -1,120 +1,232 @@
 ---
-import { render } from 'astro:content';
 import { withBase } from '../../utils/url';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import LibraryCard from '../../components/LibraryCard.astro';
-import BookmarkButton from '../../components/BookmarkButton.astro';
-import Tags from '../../components/Tags.astro';
-import { SECTIONS, SITE } from '../../config';
-import { getPosts, formatDate } from '../../utils/content';
-import { t } from '../../i18n';
+import { SECTIONS } from '../../config';
+import { getPosts } from '../../utils/content';
 
 const items = await getPosts('library');
-const rendered = await Promise.all(items.map(async item => ({ item, Content: (await render(item)).Content })));
 const sec = SECTIONS.library;
+
+const TYPE_LABEL: Record<string, string> = {
+  book: '书',
+  paper: '论文',
+  tool: '工具',
+  course: '课程',
+  article: '文章',
+  video: '视频',
+  dataset: '数据集',
+  other: '其他',
+};
 const STATUS_ORDER: Record<string, number> = { reading: 0, todo: 1, done: 2 };
-const types = [...new Set(items.map(item => item.data.type))];
-const previewId = (id: string) => `library-note-${encodeURIComponent(id)}`;
+const types = [...new Set(items.map((i) => i.data.type))];
 ---
+
 <BaseLayout title={sec.label} description={sec.desc}>
-  <section class="container section" id="library-browser">
+  <section class="container section">
     <span class="postit reveal" style="--i:0">{sec.emoji} {sec.subtitle}</span>
     <h1 class="page-title reveal" style="--i:1">{sec.label}</h1>
     <p class="page-desc reveal" style="--i:2">{sec.desc}</p>
 
-    <div class="toolbar">
-      <div class="filters" role="group" aria-label="按类型筛选">
-        <button class="hand-btn small is-on" type="button" data-type="all" aria-pressed="true">全部</button>
-        {types.map(type => <button class="hand-btn small" type="button" data-type={type} aria-pressed="false">{t.library.types[type] ?? type}</button>)}
-      </div>
+    <div class="toolbar reveal" style="--i:3">
+      {
+        types.length > 1 && (
+          <div class="filters" role="group" aria-label="按类型筛选">
+            <button class="hand-btn small is-on" data-type="all">
+              全部
+            </button>
+            {types.map((t) => (
+              <button class="hand-btn small" data-type={t}>
+                {TYPE_LABEL[t] ?? t}
+              </button>
+            ))}
+          </div>
+        )
+      }
       <input id="lib-search" class="search" type="search" placeholder="搜标题 / 作者 / 标签…" aria-label="搜索资料库" />
     </div>
-    <div class="toolbar">
-      <label class="status-filter">{SITE.author} 的阅读状态
-        <select id="lib-status"><option value="all">全部状态</option><option value="reading">在读</option><option value="todo">待读</option><option value="done">已读</option><option value="none">未标记</option></select>
-      </label>
-      <label class="saved-filter"><input id="lib-saved-only" type="checkbox" />只看我的稍后读</label>
-      <button class="hand-btn small" id="lib-clear" type="button">清除筛选</button>
-    </div>
-    <div class="toolbar">
+    <div class="toolbar reveal" style="--i:4">
       <div class="sorts" role="group" aria-label="排序">
         <span class="meta">排序</span>
-        <button class="hand-btn small is-on" type="button" data-sort="date" aria-pressed="true">最新</button>
-        <button class="hand-btn small" type="button" data-sort="rating" aria-pressed="false">评分</button>
-        <button class="hand-btn small" type="button" data-sort="status" aria-pressed="false">在读优先</button>
+        <button class="hand-btn small is-on" data-sort="date">最新</button>
+        <button class="hand-btn small" data-sort="rating">评分</button>
+        <button class="hand-btn small" data-sort="status">在读优先</button>
       </div>
-      <span id="lib-count" class="meta" role="status">{items.length} 项资料</span>
-      <button class="hand-btn small" id="lib-random" type="button" disabled={!items.length}>🎲 随机来一本</button>
+      <button class="hand-btn small" id="lib-random">🎲 随机来一本</button>
     </div>
 
-    <div class="library-workspace" id="library-workspace">
-      <div class="grid" id="lib-grid">
-        {items.map((item, i) => (
-          <div data-library-item data-type={item.data.type} data-date={item.data.date.valueOf()} data-rating={item.data.rating ?? 0}
-            data-status={STATUS_ORDER[item.data.status ?? ''] ?? 3} data-reading-status={item.data.status ?? 'none'}
-            data-reading-path={`/${item.collection}/${item.id}/`}
-            data-search={[item.data.title, item.data.author, item.data.summary, ...item.data.tags].filter(Boolean).join(' ').toLowerCase()}>
-            <LibraryCard href={withBase(`/library/${item.id}/`)} title={item.data.title} type={item.data.type} url={item.data.url} author={item.data.author}
-              rating={item.data.rating} status={item.data.status} summary={item.data.summary} cover={item.data.cover} tags={item.data.tags}
-              rotate={i % 3 === 0 ? -0.5 : i % 3 === 1 ? 0.4 : -0.2} index={Math.min(5 + i, 10)} transitionName={`library-${item.id}`} previewId={previewId(item.id)} />
+    <div class="grid" id="lib-grid">
+      {
+        items.map((it, i) => (
+          <div
+            data-type={it.data.type}
+            data-date={it.data.date.valueOf()}
+            data-rating={it.data.rating ?? 0}
+            data-status={STATUS_ORDER[it.data.status ?? ''] ?? 3}
+            data-search={[it.data.title, it.data.author, it.data.summary, ...it.data.tags].filter(Boolean).join(' ').toLowerCase()}
+          >
+            <LibraryCard
+              href={withBase(`/library/${it.id}/`)}
+              title={it.data.title}
+              type={it.data.type}
+              url={it.data.url}
+              author={it.data.author}
+              rating={it.data.rating}
+              status={it.data.status}
+              summary={it.data.summary}
+              cover={it.data.cover}
+              tags={it.data.tags}
+              rotate={i % 3 === 0 ? -0.5 : i % 3 === 1 ? 0.4 : -0.2}
+              index={5 + i}
+              transitionName={`library-${it.id}`}
+            />
           </div>
-        ))}
-      </div>
-      <aside class="library-preview hand-card" id="library-preview" aria-labelledby="library-preview-title" hidden>
-        <div class="preview-heading"><span class="meta">📎 资料快览</span><button class="hand-btn small" id="library-preview-close" type="button">关闭快览</button></div>
-        <div id="library-preview-content"></div>
-      </aside>
+        ))
+      }
     </div>
-    <p class="muted empty" id="lib-empty" hidden>没有匹配的条目。可以清除筛选，或取消“只看我的稍后读”。</p>
+    <p class="muted empty" id="lib-empty" hidden>没有匹配的条目。</p>
     {items.length === 0 && <p class="muted">资料库还是空的。</p>}
-    <p class="meta" data-storage-note>仅保存在当前浏览器，不同步账号。</p>
-
-    {rendered.map(({ item, Content }) => (
-      <template id={previewId(item.id)}>
-        <h2 id="library-preview-title" tabindex="-1">{item.data.title}</h2>
-        <p class="meta">{t.library.types[item.data.type]}{item.data.author && ` · ${item.data.author}`} · {formatDate(item.data.date)}</p>
-        {item.data.cover && <img class="preview-cover" src={withBase(item.data.cover)} alt="" loading="lazy" />}
-        {item.data.summary && <blockquote class="preview-summary">{item.data.summary}</blockquote>}
-        <div class="preview-actions">
-          <BookmarkButton path={`/${item.collection}/${item.id}/`} title={item.data.title} section={sec.label} />
-          <a class="hand-btn small" href={withBase(`/library/${item.id}/`)}>完整笔记 →</a>
-          {item.data.url && <a class="hand-btn small" href={item.data.url} target="_blank" rel="noopener">原文 ↗</a>}
-        </div>
-        {item.data.tags.length > 0 && <Tags tags={item.data.tags} small />}
-        <div class="preview-note prose">{item.body?.trim() ? <Content /> : <p class="muted">还没有正文笔记。</p>}</div>
-      </template>
-    ))}
   </section>
 </BaseLayout>
 
 <style>
-  .toolbar,.filters,.sorts { display:flex;flex-wrap:wrap;align-items:center;gap:.65rem; }
-  .toolbar { justify-content:space-between;margin:1.2rem 0 0; }
-  .hand-btn.is-on { background:var(--postit); }
-  .search,select { font:inherit;font-size:1rem;padding:.35rem .65rem;border:2px solid var(--pencil);border-radius:var(--radius-wobble-sm);background:var(--paper-2);color:var(--pencil);max-width:100%; }
-  .search { flex:0 1 18rem;min-width:0;width:100%;box-shadow:var(--shadow-hand-sm); }
-  .status-filter,.saved-filter { display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;font-size:.9rem; }
-  .saved-filter input { width:1.05rem;height:1.05rem;accent-color:var(--pen); }
-  .grid { display:grid;gap:1.25rem;min-width:0; }
-  .library-workspace { margin-top:1.5rem; }
-  .library-preview { padding:1.2rem;min-width:0;grid-column:1/-1;background:var(--paper-2); }
-  .library-preview[hidden], [data-library-item][hidden], .empty[hidden] { display:none; }
-  .preview-heading { display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem; }
-  #library-preview-content :global(h2) { font-size:1.4rem;overflow-wrap:anywhere; }
-  #library-preview-content :global(.preview-cover) { max-height:12rem;width:100%;object-fit:contain;margin-block:1rem; }
-  #library-preview-content :global(.preview-summary) { margin:1rem 0;padding:.6rem .8rem;background:var(--postit);border-left:3px solid var(--pen); }
-  #library-preview-content :global(.preview-actions) { display:flex;gap:.6rem;flex-wrap:wrap;margin-block:1rem; }
-  #library-preview-content :global(.preview-note) { font-size:1rem;margin-top:1.4rem;overflow-wrap:anywhere; }
-  #library-preview-content :global(.preview-note h2) { font-size:1.25rem; }
-  [data-library-item].is-previewing :global(.lib-card) { outline:2px dashed var(--pen);outline-offset:5px; }
-  .empty { margin-block:1.5rem; }
-  @media(min-width:640px) { .grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-  @media(min-width:900px) {
-    .grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    .library-workspace.has-preview { display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:1.6rem;align-items:start; }
-    .has-preview .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    .library-preview { grid-column:auto;position:sticky;top:5rem;max-height:calc(100dvh - 6.5rem);overflow:auto; }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
   }
-  @media(max-width:899px) { .has-preview .grid { grid-template-columns:1fr; } }
+  .filters,
+  .sorts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .hand-btn.is-on {
+    background: var(--postit);
+  }
+  .search {
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.35rem 0.9rem;
+    border: 2px solid var(--pencil);
+    border-radius: var(--radius-wobble-sm);
+    background: var(--paper-2);
+    color: var(--pencil);
+    box-shadow: var(--shadow-hand-sm);
+    min-width: 14rem;
+    transition: all 0.12s ease;
+  }
+  .search:focus {
+    outline: none;
+    background: var(--postit);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-hand);
+  }
+  .grid {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .empty {
+    margin-top: 1.5rem;
+  }
+  :global(.is-picked) {
+    animation: pick 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  :global(.is-picked > .hand-card) {
+    box-shadow: var(--shadow-hand) !important;
+    background: var(--postit) !important;
+  }
+  @keyframes pick {
+    0% {
+      transform: rotate(0) scale(1);
+    }
+    30% {
+      transform: rotate(-3deg) scale(1.05);
+    }
+    60% {
+      transform: rotate(2deg) scale(1.04);
+    }
+    100% {
+      transform: rotate(0) scale(1);
+    }
+  }
 </style>
-<script src="../../scripts/library-browser.ts"></script>
+
+<script>
+  function bindLibrary() {
+    const grid = document.getElementById('lib-grid');
+    if (!grid || grid.dataset.bound) return;
+    grid.dataset.bound = '1';
+    const gridEl = grid;
+    const typeBtns = document.querySelectorAll<HTMLButtonElement>('.filters [data-type]');
+    const sortBtns = document.querySelectorAll<HTMLButtonElement>('.sorts [data-sort]');
+    const dice = document.getElementById('lib-random');
+    const input = document.getElementById('lib-search') as HTMLInputElement | null;
+    const empty = document.getElementById('lib-empty');
+    const items = () => [...gridEl.children] as HTMLElement[];
+    let type = 'all';
+    let q = '';
+
+    function apply() {
+      let shown = 0;
+      items().forEach((it) => {
+        const ok = (type === 'all' || it.dataset.type === type) && (!q || (it.dataset.search ?? '').includes(q));
+        it.style.display = ok ? '' : 'none';
+        if (ok) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+    }
+    function sortBy(key: string) {
+      const kids = items();
+      kids.sort((a, b) => {
+        const av = Number(a.dataset[key] ?? 0), bv = Number(b.dataset[key] ?? 0);
+        return key === 'status' ? av - bv : bv - av;
+      });
+      kids.forEach((k) => gridEl.appendChild(k));
+    }
+    typeBtns.forEach((b) =>
+      b.addEventListener('click', () => {
+        typeBtns.forEach((x) => x.classList.toggle('is-on', x === b));
+        type = b.dataset.type ?? 'all';
+        apply();
+      }),
+    );
+    sortBtns.forEach((b) =>
+      b.addEventListener('click', () => {
+        sortBtns.forEach((x) => x.classList.toggle('is-on', x === b));
+        sortBy(b.dataset.sort ?? 'date');
+      }),
+    );
+    input?.addEventListener('input', () => {
+      q = input.value.trim().toLowerCase();
+      apply();
+    });
+    dice?.addEventListener('click', () => {
+      const visible = items().filter((k) => k.style.display !== 'none');
+      visible.forEach((k) => k.classList.remove('is-picked'));
+      const pick = visible[Math.floor(Math.random() * visible.length)];
+      if (!pick) return;
+      pick.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      void pick.offsetWidth;
+      pick.classList.add('is-picked');
+      setTimeout(() => pick.classList.remove('is-picked'), 2500);
+    });
+  }
+  bindLibrary();
+  document.addEventListener('astro:page-load', bindLibrary);
+</script>

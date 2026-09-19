@@ -10,7 +10,6 @@ import Toc from '../components/Toc.astro';
 import PostMeta from '../components/PostMeta.astro';
 import SeriesNav from '../components/SeriesNav.astro';
 import Related from '../components/Related.astro';
-import ReadingWorkbench from '../components/ReadingWorkbench.astro';
 import { formatDate, type SeriesEntry, type TaggedEntry } from '../utils/content';
 import { SECTIONS, config, type SectionKey } from '../config';
 
@@ -54,12 +53,11 @@ const {
   related = [],
 } = Astro.props;
 const sec = SECTIONS[section];
-const entryPath = Astro.url.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, '').length);
 ---
 
 <BaseLayout title={title} description={description} image={image} type="article" publishedTime={date} searchIndex>
   {config.features.readingProgress && <ReadingProgress />}
-  <article class="container section" id="reader-article" data-reader-path={entryPath} data-pagefind-meta={`section:${sec.label}`}>
+  <article class="container section" data-pagefind-meta={`section:${sec.label}`}>
     <header class="post-header reveal">
       <a href={withBase(sec.href)} class="postit">{sec.emoji} {sec.label}</a>
       <h1 class="post-title" transition:name={transitionName} data-pagefind-meta="title">{title}</h1>
@@ -72,13 +70,11 @@ const entryPath = Astro.url.pathname.slice(import.meta.env.BASE_URL.replace(/\/$
       <slot name="extra" />
     </header>
 
-    <ReadingWorkbench path={entryPath} title={title} section={sec.label} />
-
     {series && <SeriesNav name={series.name} entries={series.entries} current={series.current} />}
 
     {config.features.toc && <Toc headings={headings} />}
 
-    <div class="prose reveal" id="reader-content" style="--i: 2">
+    <div class="prose reveal" style="--i: 2">
       <slot />
     </div>
 
@@ -112,10 +108,6 @@ const entryPath = Astro.url.pathname.slice(import.meta.env.BASE_URL.replace(/\/$
 </BaseLayout>
 
 <style>
-  #reader-article[data-reader-width='narrow'] { --max-w-prose:36rem; }
-  #reader-article[data-reader-size='large'] > .prose { font-size:1.3rem; }
-  #reader-article :global(.prose :is(h1,h2,h3,h4)) { scroll-margin-top:var(--reader-scroll-offset,12rem); }
-  #reader-article.reader-focus :global(.toc), #reader-article.reader-focus .post-footer { display:none; }
   .post-header {
     max-width: var(--max-w-prose);
     margin: 0 auto 2.5rem;

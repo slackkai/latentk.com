@@ -160,12 +160,11 @@ const items = headings.filter((h) => h.depth >= minDepth && h.depth <= maxDepth)
     };
     // 取视口顶部（留出 sticky 导航栏高度）以上最近的一个标题作为当前章节。
     // 用 getBoundingClientRect 而非 offsetTop：后者相对定位父元素，容器一旦 relative 就会算错。
+    const LINE = 120;
     const update = () => {
-      const article = document.getElementById('reader-article');
-      const line = article ? Math.max(120, parseFloat(getComputedStyle(article).getPropertyValue('--reader-scroll-offset')) || 120) : 120;
       let active = heads[0];
       for (const h of heads) {
-        if (h.getBoundingClientRect().top <= line + 2) active = h;
+        if (h.getBoundingClientRect().top <= LINE) active = h;
         else break;
       }
       // 滚到底时高亮最后一个
@@ -175,8 +174,6 @@ const items = headings.filter((h) => h.depth >= minDepth && h.depth <= maxDepth)
       setActive(active.id);
     };
     window.addEventListener('scroll', update, { passive: true, signal });
-    window.addEventListener('resize', update, { signal });
-    document.addEventListener('reading:change', update, { signal });
     update();
   }
   initToc();

@@ -20,9 +20,8 @@ interface Props {
   rotate?: number;
   index?: number;
   transitionName?: string;
-  previewId?: string;
 }
-const { href, title, type, url, author, rating, status, summary, cover, tags = [], rotate = 0, index = 0, transitionName, previewId } =
+const { href, title, type, url, author, rating, status, summary, cover, tags = [], rotate = 0, index = 0, transitionName } =
   Astro.props;
 const typeLabel = `${t.library.typeEmoji[type] ?? t.library.typeEmoji.other} ${t.library.types[type] ?? t.library.types.other}`;
 ---
@@ -50,7 +49,6 @@ const typeLabel = `${t.library.typeEmoji[type] ?? t.library.typeEmoji.other} ${t
     {summary && <p class="lib-summary">{summary}</p>}
     <div class="lib-foot">
       {tags.length > 0 && <Tags tags={tags} small />}
-      {previewId && <button class="hand-btn small" type="button" data-preview-template={previewId} aria-controls="library-preview" aria-expanded="false" aria-label={`快览：${title}`}>快览 →</button>}
       {
         url && (
           <a href={withBase(url)} target="_blank" rel="noopener" class="hand-btn small">

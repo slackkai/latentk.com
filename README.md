@@ -19,8 +19,6 @@ Kai 的个人网站。保留原来的具身主题首页、机械臂、研究方�
 
 ## 日常更新
 
-访客侧新增[资料快览与阅读工作台](docs/READING.md)：在资料卡片上打开快览、加入稍后读，在文章页调整阅读设置并续接上次位置。
-
 打开[个人站后台](https://slackkai.github.io/latentk.com/admin/)，首次使用时连接有权写入 `slackkai/latentk.com` 的 GitHub token。
 
 1. 选择学术、洞见、日常、资料库或项目。
