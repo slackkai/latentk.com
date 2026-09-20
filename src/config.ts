@@ -116,7 +116,7 @@ export const config = {
      * Web3Forms access key（设计上就是公开的）。到 https://web3forms.com 用邮箱免费领取。
      * 留空时留言页显示"尚未配置"。
      */
-    web3formsKey: '',
+    web3formsKey: '204f3fa9-768b-44aa-a229-9790b0d9a956',
   },
 };
 
