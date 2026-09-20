@@ -6,7 +6,7 @@ description: 这个站点本身。Astro + 手绘笔记本风格，部署在 GitH
 tags:
   - blog
   - web
-draft: true
+draft: false
 status: done
 cover: /uploads/SnowShot_2026-09-20_09-29-26.png
 video: ''
