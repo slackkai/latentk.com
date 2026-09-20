@@ -4,7 +4,8 @@ doing:
   - 写日记 读论文
 reading:
   - embodied papers...
-listening: []
+listening:
+  - song
 ---
 
 <!-- 正文可留空。字段说明：doing / reading / listening 各是字符串数组；
