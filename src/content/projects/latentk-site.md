@@ -1,13 +1,26 @@
 ---
-title: 'latentk.com'
+title: latentk.com
 date: 2026-09-18
-description: '这个站点本身。Astro + 手绘笔记本风格，部署在 GitHub Pages。'
+updated: ''
+description: 这个站点本身。Astro + 手绘笔记本风格，部署在 GitHub Pages。
+tags:
+  - blog
+  - web
+draft: true
 status: done
-stack: ['Astro', 'TypeScript', 'CSS']
-tags: ['blog', 'web']
+cover: /uploads/SnowShot_2026-09-20_09-29-26.png
+video: ''
+stack:
+  - Astro
+  - TypeScript
+  - CSS
 links:
-  github: 'https://github.com/slackkai/latentk.com'
-  demo: 'https://latentk.com'
+  github: https://github.com/slackkai/latentk.com
+  demo: https://latentk.com
+  paper: ''
+  docs: ''
+featured: false
 ---
 
-五个板块、一套配色切换、一条机械臂，以及可视化内容管理后台。
+借助Fable5.1和Astra制作并部署的静态网站，AI神力。
+花时间最久的是买一个自己喜欢的域名你信吗（bushi
