@@ -3,7 +3,7 @@ updated: 2026-09-19
 doing:
   - 写日记 读论文
 reading:
-  - embodied papers
+  - embodied papers...
 listening: []
 ---
 
