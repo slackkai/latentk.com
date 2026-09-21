@@ -8,7 +8,7 @@ tags:
   - web
 draft: false
 status: done
-cover: /uploads/SnowShot_2026-09-20_09-29-26.png
+cover: /uploads/latentk-site-cover.webp
 video: ''
 stack:
   - Astro

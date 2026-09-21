@@ -26,7 +26,7 @@ Kai 的个人网站。保留原来的具身主题首页、机械臂、研究方�
 3. 发布时关闭“草稿”开关，保存。
 4. 等待 GitHub Actions 的 **Deploy to GitHub Pages** 成功，网站自动更新。
 
-后台的“站点设置”可修改站名、作者、简介、联系方式及 Now 卡片。草稿只从生成的网站中隐藏，公开仓库的源文件仍然公开。详细操作见[更新指南](docs/CONTENT-EDITING.md)。
+后台的“站点设置”可修改站名、作者、简介、联系方式、Now 卡片和关于页的自我介绍。草稿只从生成的网站中隐藏，公开仓库的源文件仍然公开。详细操作见[更新指南](docs/CONTENT-EDITING.md)。
 
 ## 本地写作与开发
 
@@ -55,7 +55,8 @@ npm run new -- insight my-first-post "文章标题"
 | 研究方向、工作台、首页、功能开关、配色、页脚 | `src/config.ts` |
 | 五个板块正文 | `src/content/` |
 | 最近在做 / 在读 / 在听 | `src/content/now/now.md` |
-| 关于页正文 | `src/pages/about.astro` |
+| 关于页自我介绍 | 后台“站点设置 → 关于页”，或 `src/content/about/about.md` |
+| 关于页其余结构 | `src/pages/about.astro` |
 | 内容管理字段、列表排序与筛选、上传图片压缩 | `cms.config.mjs` |
 | 后台编辑器组件（批注 / 高亮 / 公式）与预览样式 | `public/admin/components.js`、`public/admin/preview.css` |
 | `:note[]` / `:mark[]` 的渲染 | `src/utils/remark-notes.mjs` |
