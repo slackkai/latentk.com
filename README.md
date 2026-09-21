@@ -45,7 +45,7 @@ npm run dev
 npm run new -- insight my-first-post "文章标题"
 ```
 
-需要组件、页边批注和高亮的 `.mdx` 文件继续使用代码编辑器维护。Markdown/MDX 均支持公式和代码高亮。
+页边批注、荧光笔、公式和代码高亮都是普通 Markdown：`:note[批注]`、`:mark[高亮]`、`$…$` 与 `$$ … $$`，后台工具栏有对应按钮，富文本与 Markdown 模式可无损切换。只有需要自定义 Astro 组件的 `.mdx` 文件才继续用代码编辑器维护。
 
 ## 配置位置
 
@@ -56,7 +56,9 @@ npm run new -- insight my-first-post "文章标题"
 | 五个板块正文 | `src/content/` |
 | 最近在做 / 在读 / 在听 | `src/content/now/now.md` |
 | 关于页正文 | `src/pages/about.astro` |
-| 内容管理字段 | `cms.config.mjs` |
+| 内容管理字段、列表排序与筛选、上传图片压缩 | `cms.config.mjs` |
+| 后台编辑器组件（批注 / 高亮 / 公式）与预览样式 | `public/admin/components.js`、`public/admin/preview.css` |
+| `:note[]` / `:mark[]` 的渲染 | `src/utils/remark-notes.mjs` |
 
 ## 检查和部署
 
