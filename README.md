@@ -51,8 +51,8 @@ npm run new -- insight my-first-post "文章标题"
 
 | 配置 | 文件 |
 | --- | --- |
-| 站名、作者、域名和联系方式 | `src/data/site.json` |
-| 研究方向、首页、功能开关、配色、页脚 | `src/config.ts` |
+| 站名、作者、域名、联系方式、页脚结束语 | `src/data/site.json` |
+| 研究方向、首页、功能开关、配色 | `src/config.ts` |
 | 五个板块正文 | `src/content/` |
 | 最近在做 / 在读 / 在听 | `src/content/now/now.md` |
 | 关于页：自我介绍、“这个站点有什么”、工作台 | 后台“站点设置 → 关于页”，或 `src/content/about/about.md` |

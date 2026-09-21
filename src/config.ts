@@ -11,6 +11,8 @@ import site from './data/site.json';
 const siteSettings: {
   title: string; tagline: string; description: string; author: string;
   url: string; github?: string; email?: string;
+  /** 页脚随机结束语，留空则不显示；在后台“站点设置 → 基本信息”编辑 */
+  signoffs?: string[];
 } = site;
 
 export type Lang = 'zh' | 'en';
@@ -23,7 +25,7 @@ export const config = {
   htmlLang: 'zh-CN',
 
   /** 可在 /admin/ 的“站点设置”中编辑，对应 src/data/site.json。 */
-  site: { ...siteSettings, github: siteSettings.github ?? '', email: siteSettings.email ?? '' },
+  site: { ...siteSettings, github: siteSettings.github ?? '', email: siteSettings.email ?? '', signoffs: (siteSettings.signoffs ?? []).filter(Boolean) },
 
   /**
    * 板块。enabled: false 会从导航、首页、归档、RSS、搜索里隐藏该板块
@@ -78,16 +80,6 @@ export const config = {
   },
 
 
-  footer: {
-    /** 页脚随机结束语，空数组则不显示 */
-    signoffs: [
-      '今天也把想法留在纸上了。',
-      '读到这里，起来动一动身体。',
-      '机器人还在学走路，我也是。',
-      '仿真里成立的，去真实世界试试。',
-      '写下来，才知道自己没想清楚。',
-    ],
-  },
 
   guestbook: {
     /**
