@@ -77,28 +77,6 @@ export const config = {
     ],
   },
 
-  about: {
-    /** 关于页底部的工作台，设为 null 则不显示 */
-    workbench: {
-      tools: [
-        { name: 'Isaac Lab', note: '仿真训练主力' },
-        { name: 'MuJoCo', note: '快速验证动力学' },
-        { name: 'ROS 2', note: '真机通信' },
-        { name: 'Zotero', note: '文献' },
-        { name: 'Obsidian', note: '笔记' },
-      ],
-      hardware: [
-        { name: 'Unitree Go2', note: '四足实验平台' },
-        { name: 'RealSense D435', note: '深度相机' },
-        { name: '4090 工作站', note: '训练' },
-      ],
-      questions: [
-        '仿真与真机之间，到底是哪些差距最要命？',
-        '机器人需要"记忆"吗，还是反应式策略就够了？',
-        '一个策略能不能同时会走路和会抓东西？',
-      ],
-    } as null | { tools: { name: string; note: string }[]; hardware: { name: string; note: string }[]; questions: string[] },
-  },
 
   footer: {
     /** 页脚随机结束语，空数组则不显示 */
