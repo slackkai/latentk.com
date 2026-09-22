@@ -8,7 +8,7 @@ tags:
   - web
 draft: false
 status: done
-cover: /uploads/latentk-site-cover.webp
+cover: ./attachments/latentk-site-cover.webp
 video: ''
 stack:
   - Astro
