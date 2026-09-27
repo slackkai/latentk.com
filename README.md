@@ -71,6 +71,8 @@ npm run new -- insight my-first-post "文章标题"
 
 ## 检查和部署
 
+日常完整开发使用 `npm run dev:full`（热更新 + 搜索索引）；发布前完整预览使用 `npm run preview:site`（构建 + 链接检查 + 生产预览）。搜索索引刷新、后台仓库选择及评论/留言的本地边界见 [本地预览与外部服务](docs/LOCAL-DEVELOPMENT.md)。
+
 ```sh
 npm run check
 npm test
