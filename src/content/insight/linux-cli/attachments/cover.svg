@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" fill="none" stroke="#1f2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <rect width="640" height="360" fill="#f6f7f4" stroke="none"/>
+  <path d="M70 48 h500 q12 0 12 12 v240 q0 12 -12 12 h-500 q-12 0 -12 -12 v-240 q0 -12 12 -12z" fill="#ffffff"/>
+  <path d="M58 78 h524" stroke="#1f2433"/>
+  <circle cx="92" cy="63" r="6" fill="#c4562f" stroke="none"/>
+  <circle cx="114" cy="63" r="6" fill="#e0b35a" stroke="none"/>
+  <circle cx="136" cy="63" r="6" fill="#7fbf9a" stroke="none"/>
+  <text x="92" y="130" font-family="ui-monospace, Consolas, monospace" font-size="22" fill="#3b4f9e" stroke="none">~ $ pwd</text>
+  <text x="92" y="166" font-family="ui-monospace, Consolas, monospace" font-size="20" fill="#1f2433" stroke="none">/home/kai</text>
+  <text x="92" y="214" font-family="ui-monospace, Consolas, monospace" font-size="22" fill="#3b4f9e" stroke="none">~ $ ls</text>
+  <text x="92" y="250" font-family="ui-monospace, Consolas, monospace" font-size="20" fill="#3b4f9e" stroke="none">笔记</text>
+  <text x="170" y="250" font-family="ui-monospace, Consolas, monospace" font-size="20" fill="#1f2433" stroke="none">菜谱</text>
+  <text x="248" y="250" font-family="ui-monospace, Consolas, monospace" font-size="20" fill="#1f2433" stroke="none">日记.txt</text>
+  <text x="92" y="292" font-family="ui-monospace, Consolas, monospace" font-size="22" fill="#3b4f9e" stroke="none">~ $</text>
+  <path d="M148 278 v28" stroke="#c4562f" stroke-width="3"/>
+  <path d="M430 120 h150 v150 h-150z" fill="#e6ebfa" transform="rotate(3 505 195)"/>
+  <text x="448" y="160" font-family="Georgia, serif" font-size="18" fill="#1f2433" stroke="none" transform="rotate(3 505 195)">rwxr-xr-x</text>
+  <text x="448" y="196" font-family="Georgia, serif" font-size="18" fill="#1f2433" stroke="none" transform="rotate(3 505 195)">你 组 别人</text>
+  <text x="448" y="232" font-family="Georgia, serif" font-size="16" fill="#c4562f" stroke="none" transform="rotate(3 505 195)">4 + 2 + 1</text>
+</svg>
