@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" fill="none" stroke="#1f2433" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <rect width="640" height="360" fill="#f6f7f4" stroke="none"/>
+  <path d="M110 46 q210 -8 420 6 v250 q-210 -12 -420 6z" fill="#ffffff"/>
+  <path d="M152 96 h330 M152 126 h330 M152 156 h330" stroke="#c9ccd6" stroke-width="3" stroke-dasharray="2 12"/>
+  <path d="M150 252 H464" stroke="#1f2433" stroke-width="4"/>
+  <path d="M300 252 C 330 252 322 182 352 182 H402 C 432 182 430 252 462 252" stroke="#3b4f9e" stroke-width="4"/>
+  <circle cx="150" cy="252" r="9" fill="#ffffff"/>
+  <circle cx="225" cy="252" r="9" fill="#ffffff"/>
+  <circle cx="300" cy="252" r="9" fill="#ffffff"/>
+  <circle cx="352" cy="182" r="9" fill="#dcefe4"/>
+  <circle cx="402" cy="182" r="9" fill="#dcefe4"/>
+  <circle cx="462" cy="252" r="12" fill="#c4562f" stroke="#c4562f"/>
+  <rect x="176" y="272" width="98" height="34" rx="6" fill="#e6ebfa" transform="rotate(-3 225 289)"/>
+  <text x="206" y="296" font-family="Georgia, serif" font-size="20" fill="#1f2433" stroke="none">main</text>
+  <rect x="338" y="138" width="132" height="34" rx="6" fill="#dcefe4" transform="rotate(-2 404 155)"/>
+  <text x="362" y="162" font-family="Georgia, serif" font-size="20" fill="#1f2433" stroke="none">feature</text>
+  <path d="M468 240 C 482 196 462 150 436 126" stroke="#c4562f" stroke-width="3" stroke-dasharray="4 7"/>
+  <path d="M446 132 l-10 -6 l3 11" stroke="#c4562f" stroke-width="3"/>
+  <text x="392" y="108" font-family="Georgia, serif" font-size="21" fill="#c4562f" stroke="none">HEAD</text>
+  <path d="M470 64 h124 v76 h-124z" fill="#e6ebfa" transform="rotate(4 532 102)"/>
+  <path d="M496 60 h48" stroke="#f0e6a8" stroke-width="10" transform="rotate(4 532 102)"/>
+  <text x="490" y="98" font-family="ui-monospace, Consolas, monospace" font-size="15" fill="#3b4f9e" stroke="none" transform="rotate(4 532 102)">$ git commit</text>
+  <text x="490" y="122" font-family="ui-monospace, Consolas, monospace" font-size="15" fill="#8a90a4" stroke="none" transform="rotate(4 532 102)">-m "..."</text>
+  <path d="M254 34 h150" stroke="#f0e6a8" stroke-width="20" stroke-opacity="0.8"/>
+  <path d="M170 330 h96" stroke="#c4562f" stroke-width="3"/>
+</svg>
