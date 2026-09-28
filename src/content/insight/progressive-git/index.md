@@ -171,7 +171,7 @@ Git 把一个文件夹在某一刻的样子整体存下来，存成一张快照�
 
 沙盒里的 Git 是照着真实 Git 的输出和行为写的，但它毕竟只有一层文件夹、一小撮命令。真正的训练是：建一个 `play` 目录，`git init`，把这七课的组合拳打一遍；然后回到你的项目里，从 `git status` 开始。
 
-::bookmark[Learn Git Branching]{url=https://learngitbranching.js.org/?locale=zh_CN desc="把分支、rebase 和 cherry-pick 做成关卡游戏，和这份教程正好互补"}
+::bookmark[Learn Git Branching]{url="https://learngitbranching.js.org/?locale=zh_CN" desc="把分支、rebase 和 cherry-pick 做成关卡游戏，和这份教程正好互补"}
 
 ::bookmark[Pro Git 中文版]{url=https://git-scm.com/book/zh/v2 desc="官方推荐的系统教材，免费在线阅读；想深入对象模型就读第 10 章「Git 内部原理」"}
 
