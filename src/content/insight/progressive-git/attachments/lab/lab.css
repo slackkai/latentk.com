@@ -137,10 +137,6 @@ kbd {
   display: grid;
   gap: 0.9rem;
 }
-/* 网格项默认 min-width:auto，会被提交链之类的内容撑宽；允许收缩，由内部元素自己滚动。 */
-.stage > * {
-  min-width: 0;
-}
 .panel {
   position: relative;
   padding: 0.7rem 0.75rem 0.75rem;
@@ -500,8 +496,6 @@ kbd {
 /* 提交图：左边是连线，右边一行一个提交 */
 .graph {
   position: relative;
-  /* 一行提交里的引用标签不换行；面板太窄时让图横向滚动，而不是把 iframe 撑宽。 */
-  overflow-x: auto;
 }
 .graph svg {
   position: absolute;
@@ -585,9 +579,6 @@ kbd {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.9rem;
 }
-.remote-pair > * {
-  min-width: 0;
-}
 .remote-pair .panel-title .where {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -629,7 +620,7 @@ kbd {
 /* ---------- 任务条 ---------- */
 .task {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto 1fr auto;
   align-items: start;
   gap: 0.2rem 0.7rem;
   margin-top: 0.85rem;
@@ -660,9 +651,7 @@ kbd {
   border: 1.5px solid var(--pencil-45);
   border-radius: 4px;
   cursor: pointer;
-  /* 宽屏上命令保持一行；窄屏放不下时允许断开，避免把任务条撑出 iframe。 */
-  white-space: normal;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 .task-text code:hover,
 .chips code:hover {
