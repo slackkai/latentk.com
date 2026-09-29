@@ -44,7 +44,7 @@ export const config = {
       check: c => c.repo.stash.length === 1 && c.status.staged.length === 0 && c.status.unstaged.length === 0,
     },
     {
-      text: '把 feature 的提交搬到 main 的最新提交上：<code>git rebase main</code>。提交的哈希会变——它是新提交，只是内容和作者不变。',
+      text: '把 feature 的提交搬到 main 的最新提交上：<code>git rebase main</code>。哈希会变，它是新提交。真实项目里还要检查结果、跑一遍测试。',
       hint: 'git rebase main',
       check: c => c.branch === 'feature' && c.repo.objects.get(c.ref('feature'))?.parents[0] === c.ref('main'),
     },

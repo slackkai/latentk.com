@@ -35,7 +35,7 @@ export const config = {
       check: c => c.sh('cat') && /^<{7} /m.test(c.files['recipe.txt'] ?? ''),
     },
     {
-      text: '点上面工作区里的 <code>recipe.txt</code> 打开编辑器：自己改，或者用「留 HEAD 这边 / 留对方那边 / 两边都留」按钮。保存后标记就没了。',
+      text: '点上面工作区里的 <code>recipe.txt</code> 打开编辑器：自己改，或者用「留 HEAD 这边 / 留对方那边 / 两边都留」按钮。保存后标记就没了。留下的内容要自己读一遍。',
       hint: 'edit recipe.txt',
       check: c => c.files['recipe.txt'] !== undefined && !/^<{7} /m.test(c.files['recipe.txt']),
     },
@@ -50,7 +50,7 @@ export const config = {
       check: c => c.repo.op?.type === 'merge' && c.ran('status'),
     },
     {
-      text: '收尾：<code>git commit</code>。不用写说明，Git 已经准备好一句默认的合并说明。',
+      text: '收尾：<code>git commit</code>。沙盒直接用默认合并说明；真实终端可能先打开编辑器让你确认。',
       hint: 'git commit',
       check: c => c.repo.objects.get(c.tip).parents.length === 2,
     },
@@ -60,7 +60,7 @@ export const config = {
       check: c => c.ran('log', args => args.includes('--graph')),
     },
   ],
-  done: '记住合并冲突的三步：改文件 → git add → git commit。想反悔整场合并，随时 git merge --abort。下一课把仓库搬到 GitHub。',
+  done: '记住合并冲突的三步：改文件 → git add → git commit。想反悔整场合并，用 git merge --abort。从干净工作区开始，恢复才更完整。',
   chips: ['git status', 'cat recipe.txt', 'git log --oneline --graph --all'],
 };
 

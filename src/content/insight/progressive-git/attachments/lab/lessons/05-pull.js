@@ -53,12 +53,12 @@ export const config = {
       check: c => c.message.includes('更名'),
     },
     {
-      text: '直接 <code>git push</code> 试试。会被拒绝：GitHub 上已经有你没见过的提交，硬推会覆盖别人的工作。',
+      text: '直接 <code>git push</code> 试试。会被拒绝：你的 main 还没接上 GitHub 上多出来的那段历史，硬推会盖掉别人的提交。',
       hint: 'git push',
       check: c => c.tried('push'),
     },
     {
-      text: '把两条线接起来：<code>git pull --rebase</code>。它先 fetch，再把你的提交原样重放到队友的提交上面。',
+      text: '把两条线接起来：<code>git pull --rebase</code>。它先 fetch，再把你还没分享的提交重放到队友的提交上面。内容还在，提交身份会变。',
       hint: 'git pull --rebase',
       check: c => c.repo.objects.get(c.tip)?.parents[0] === c.remote()?.refs.get('refs/heads/main'),
     },
@@ -78,7 +78,7 @@ export const config = {
       check: c => c.remote()?.refs.get('refs/heads/main') === c.tip,
     },
   ],
-  done: 'push 被拒绝时不要慌：先 pull（或 fetch 后自己决定怎么合），再 push。下一课学各种后悔药。',
+  done: '这次被拒绝是因为历史分叉：先 fetch，看清两条线，再合并或变基，最后 push。认证失败和分支保护是另一类报错，读完再决定。',
   chips: ['git fetch', 'git status', 'git log --oneline --all', 'git remote -v'],
 };
 

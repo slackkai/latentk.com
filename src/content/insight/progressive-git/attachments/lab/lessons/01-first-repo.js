@@ -22,14 +22,14 @@ export const config = {
     { text: '把它放进暂存区：<code>git add hello.txt</code>，看看上面的图里它跑到了哪一栏。', hint: 'git add hello.txt', check: c => 'hello.txt' in c.index },
     { text: '拍第一张快照：<code>git commit -m "add hello file"</code>', hint: 'git commit -m "add hello file"', check: c => c.commits >= 1 },
     { text: '看看历史：<code>git log</code>', hint: 'git log', check: c => c.ran('log') },
-    {
-      text: '再来一轮：<code>echo "hello again" &gt;&gt; hello.txt</code>（两个 &gt; 是追加一行），然后 add、commit，说明写 <code>git commit -m "update hello"</code>。',
-      hint: c => (hello(c) === c.head['hello.txt'] ? 'echo "hello again" >> hello.txt' : hello(c) !== c.index['hello.txt'] ? 'git add hello.txt' : 'git commit -m "update hello"'),
-      check: c => c.commits >= 2,
-    },
+    { text: '再追加一行：<code>echo "hello again" &gt;&gt; hello.txt</code>，然后 <code>git add hello.txt</code>。', hint: c => (hello(c) === c.head['hello.txt'] ? 'echo "hello again" >> hello.txt' : 'git add hello.txt'), check: c => hello(c)?.includes('hello again') && c.index['hello.txt']?.includes('hello again') },
+    { text: '先别提交。再追加一行：<code>echo "not yet" &gt;&gt; hello.txt</code>。暂存区不会自动跟上。', hint: 'echo "not yet" >> hello.txt', check: c => hello(c)?.includes('not yet') && !c.index['hello.txt']?.includes('not yet') },
+    { text: '看下一次快照准备装什么：<code>git diff --staged</code>。只有 <code>hello again</code>。', hint: 'git diff --staged', check: c => c.ran('diff', a => a === '--staged') },
+    { text: '看还没暂存的内容：<code>git diff</code>。<code>not yet</code> 仍只在工作区。', hint: 'git diff', check: c => c.ran('diff', a => a === '') },
+    { text: '现在提交：<code>git commit -m "update hello"</code>。<code>not yet</code> 不会进这张快照。', hint: 'git commit -m "update hello"', check: c => c.commits >= 2 && !c.head['hello.txt']?.includes('not yet') },
     { text: '<code>git log --oneline</code>：两张快照，一行一个。', hint: 'git log --oneline', check: c => c.ran('log', args => args.includes('--oneline')) },
   ],
-  done: '你已经走完了 Git 最核心的循环：改文件 → status → add → commit → log。接着随便玩，比如 <code>cat hello.txt</code> 或 <code>git status</code>。',
+  done: '你已经走完了 Git 最核心的循环：改文件 → status → diff → add → commit → log。接着随便玩，比如 <code>cat hello.txt</code> 或 <code>git status</code>。',
   chips: ['git status', 'ls', 'cat hello.txt', 'help'],
 };
 
@@ -45,6 +45,9 @@ export const solution = [
   'git log',
   'echo "hello again" >> hello.txt',
   'git add hello.txt',
+  'echo "not yet" >> hello.txt',
+  'git diff --staged',
+  'git diff',
   'git commit -m "update hello"',
   'git log --oneline',
 ];

@@ -33,7 +33,7 @@ export const config = {
       check: c => c.ran('status'),
     },
     {
-      text: 'post.txt 的改写不要了，扔回最近一次提交的样子：<code>git restore post.txt</code>。',
+      text: 'post.txt 没暂存的改写不要了：<code>git restore post.txt</code>。没指定来源时，它从暂存区恢复；这里暂存区正好和最近一次提交一样。',
       hint: 'git restore post.txt',
       check: c => c.files['post.txt'] === c.head['post.txt'],
     },
@@ -53,7 +53,7 @@ export const config = {
       check: c => c.message.startsWith('Revert') && !c.files['post.txt'].includes('回头再改'),
     },
     {
-      text: '现在模拟手滑：<code>git reset --hard HEAD~1</code>。刚做的撤销提交被扔掉了，看看提交图里多了什么。',
+      text: '现在模拟手滑：<code>git reset --hard HEAD~1</code>。刚做的撤销提交被扔掉了。真实仓库里，这条命令还会丢掉没提交的修改。',
       hint: 'git reset --hard HEAD~1',
       check: c => !c.message.startsWith('Revert'),
     },
@@ -63,12 +63,22 @@ export const config = {
       check: c => c.ran('reflog'),
     },
     {
-      text: '时光倒流，把它救回来：<code>git reset --hard HEAD@{1}</code>。那个提交回到 main 上了。',
-      hint: 'git reset --hard HEAD@{1}',
-      check: c => c.message.startsWith('Revert'),
+      text: '先核对刚才的提交：<code>git show HEAD@{1}</code>。确认它就是那个撤销提交。这个 1 来自刚才的 reflog，不是通用答案。',
+      hint: 'git show HEAD@{1}',
+      check: c => c.ran('show', a => a === 'HEAD@{1}'),
+    },
+    {
+      text: '给它贴一张便签，先别覆盖现场：<code>git branch rescue HEAD@{1}</code>。main 还停在原地。',
+      hint: 'git branch rescue HEAD@{1}',
+      check: c => c.ref('rescue') && c.repo.objects.get(c.ref('rescue'))?.message.startsWith('Revert') && c.branch === 'main',
+    },
+    {
+      text: '<code>git log --oneline --graph --all</code>：rescue 指着找回的提交，main 和当前文件都没被再覆盖一次。',
+      hint: 'git log --oneline --graph --all',
+      check: c => c.ran('log', a => a.includes('--all')),
     },
   ],
-  done: '分清场合：没提交的修改用 restore；没推送的提交用 amend、reset；已推送的提交用 revert。真迷路了，git reflog 是最后的安全网。',
+  done: '没提交的修改用 restore，没推送的提交用 amend 或 reset，已推送的用 revert。真迷路了，先 reflog、再 show，然后 branch 留一个入口。',
   chips: ['git status', 'git log --oneline', 'git reflog', 'cat post.txt'],
 };
 
@@ -80,5 +90,7 @@ export const solution = [
   'git revert HEAD',
   'git reset --hard HEAD~1',
   'git reflog',
-  'git reset --hard HEAD@{1}',
+  'git show HEAD@{1}',
+  'git branch rescue HEAD@{1}',
+  'git log --oneline --graph --all',
 ];
