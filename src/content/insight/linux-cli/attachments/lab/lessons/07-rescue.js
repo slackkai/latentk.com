@@ -16,8 +16,10 @@ export const config = {
   tasks: [
     { text: '别急着删。先看清全貌：<code>tree</code>', hint: 'tree', check: c => c.ran('tree') },
     { text: '找出所有备份：<code>find . -name "*.bak"</code>', hint: 'find . -name "*.bak"', check: c => c.ran('find') },
-    { text: '确认它是旧的，再删：<code>cat 说明.md.bak && rm 说明.md.bak</code>', hint: 'cat 说明.md.bak && rm 说明.md.bak', check: c => !c.here.children['说明.md.bak'] },
-    { text: '整个临时目录一起清掉，目录要加 <code>-r</code>：<code>rm -r 临时</code>', hint: 'rm -r 临时', check: c => !c.here.children['临时'] },
+    { text: '先阅读旧备份，读完再做决定：<code>cat 说明.md.bak</code>。这一步不会删除。', hint: 'cat 说明.md.bak', check: c => c.ran('cat', a => a === '说明.md.bak') },
+    { text: '确认内容可以丢弃后，再单独执行：<code>rm 说明.md.bak</code>', hint: 'rm 说明.md.bak', check: c => !c.here.children['说明.md.bak'] && c.ran('rm') },
+    { text: '删除临时目录前，先检查里面的内容：<code>cat 临时/缓存.tmp</code>', hint: 'cat 临时/缓存.tmp', check: c => c.ran('cat', a => a === '临时/缓存.tmp') },
+    { text: '确认只含可丢弃的缓存后，递归删除：<code>rm -r 临时</code>', hint: 'rm -r 临时', check: c => !c.here.children['临时'] && c.ran('rm') },
     { text: '数据不该跟笔记混着。给它一个家：<code>mkdir 数据 && mv 数据.csv 数据/</code>', hint: 'mkdir 数据 && mv 数据.csv 数据/', check: c => c.here.children['数据']?.children['数据.csv'] },
     { text: '最后再看一次：<code>tree</code>', hint: 'tree', check: c => c.ran('tree') && c.here.children['数据'] },
   ],
@@ -26,6 +28,6 @@ export const config = {
 };
 
 export const solution = [
-  'tree', 'find . -name "*.bak"', 'cat 说明.md.bak && rm 说明.md.bak',
-  'rm -r 临时', 'mkdir 数据 && mv 数据.csv 数据/', 'tree',
+  'tree', 'find . -name "*.bak"', 'cat 说明.md.bak', 'rm 说明.md.bak',
+  'cat 临时/缓存.tmp', 'rm -r 临时', 'mkdir 数据 && mv 数据.csv 数据/', 'tree',
 ];

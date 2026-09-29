@@ -13,8 +13,7 @@ export function node(kind, extra = {}) {
 }
 
 export function file(content = '', mode = 'rw-r--r--') {
-  const text = content === '' || content.endsWith('\n') ? content : content + '\n';
-  return node('file', { mode, content: text });
+  return node('file', { mode, content });
 }
 
 export function dir(children = {}, mode = 'rwxr-xr-x') {
@@ -114,7 +113,7 @@ export class World {
     const hit = this.resolve(path);
     if (!hit.name) fail(`bash: ${path}: Is a directory`);
     if (hit.node?.kind === 'dir') fail(`bash: ${path}: Is a directory`);
-    const text = content === '' || content.endsWith('\n') ? content : content + '\n';
+    const text = content;
     if (hit.node) {
       if (!can(hit.node, 'w')) fail(`bash: ${path}: Permission denied`);
       hit.node.content = append ? hit.node.content + text : text;

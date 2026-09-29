@@ -1,22 +1,31 @@
-/** 第 6 课：把小命令接成一句。沙盒不跑真正的管道，用 && 和重定向把同样的想法走一遍。 */
+/** 第 6 课：区分输出重定向、数据管道与按退出码连接命令。 */
 export const config = {
-  title: '第 6 课 · 一条命令只做一件事',
+  title: '第 6 课 · 让文本流过小工具',
   next: '第 7 课',
-  intro: 'Unix 的手艺是把小工具接起来，而不是找一个大而全的命令。',
+  intro: '三封来信，两封谈会议。先预测筛选结果，再看中间文本，最后才计数。',
   setup(world) {
     world.put('~/来信/一.txt', '主题: 会议\n下周三见。\n');
     world.put('~/来信/二.txt', '主题: 账单\n电费 42。\n');
     world.put('~/来信/三.txt', '主题: 会议\n改到周四。\n');
   },
   tasks: [
-    { text: '先确认有三封信：<code>ls 来信</code>', hint: 'ls 来信', check: c => c.ran('ls') },
-    { text: '数一数：<code>ls 来信 > 清单.txt</code>，把名单存下来，而不是只看一眼。', hint: 'ls 来信 > 清单.txt', check: c => c.here.children['清单.txt']?.content.includes('一.txt') },
-    { text: '两步接成一句，前一步成功才做后一步：<code>wc -l 清单.txt && cat 清单.txt</code>', hint: 'wc -l 清单.txt && cat 清单.txt', check: c => c.ran('wc') && c.ran('cat') },
-    { text: '在第二封里找账单：<code>grep 账单 来信/二.txt</code>', hint: 'grep 账单 来信/二.txt', check: c => c.ran('grep') },
-    { text: '命令自己也不用背。<code>man grep</code> 会告诉你它还能怎么用。', hint: 'man grep', check: c => c.ran('man') },
+    { text: '先读三封来信：<code>cat 来信/一.txt 来信/二.txt 来信/三.txt</code>', hint: 'cat 来信/一.txt 来信/二.txt 来信/三.txt', check: c => c.ran('cat', a => a.includes('三.txt')) },
+    { text: '把文本送给 grep。预期只剩两行：<code>cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议"</code>', hint: 'cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议"', check: c => c.ran('cat') && c.ran('grep', a => a === '会议') },
+    { text: '把相同筛选结果保存到文件：<code>cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议" > 会议.txt</code>', hint: 'cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议" > 会议.txt', check: c => c.here.children['会议.txt']?.content === '主题: 会议\n主题: 会议\n' },
+    { text: '检查文件，再把文件内容交给 wc：<code>cat 会议.txt | wc -l</code>。应得到 2。', hint: 'cat 会议.txt | wc -l', check: c => c.ran('cat', a => a === '会议.txt') && c.ran('wc', a => a === '-l') },
+    { text: '不落盘也能计数：<code>cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议" | wc -l</code>', hint: 'cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议" | wc -l', check: c => c.ran('cat') && c.ran('grep') && c.ran('wc') },
+    { text: '试试没有匹配：<code>grep "不存在" 会议.txt && echo "找到"</code>。右边不应执行；然后输入 <code>echo "检查完成"</code> 结束。', hint: 'grep "不存在" 会议.txt && echo "找到"', check: c => c.world.events.some(e => e.sh === 'grep' && e.status === 1) && c.ran('echo', a => a === '检查完成') },
   ],
-  done: '每个命令做一件小事：<code>ls</code> 列名字，<code>wc</code> 计数，<code>grep</code> 挑行。<code>&gt;</code> 把结果留下，<code>&amp;&amp;</code> 把两步串起来。真终端里还有一根竖线 <code>|</code>，把前一个的输出直接喂给后一个。',
-  chips: ['man ls', 'cat 清单.txt'],
+  done: '<code>|</code> 传文本，<code>&gt;</code> 存文本，<code>&amp;&amp;</code> 检查是否成功再继续。结果有疑问时，从左到右逐段检查，不要只看最后一个数字。',
+  chips: ['cat 会议.txt', 'echo "检查完成"', 'man grep'],
 };
 
-export const solution = ['ls 来信', 'ls 来信 > 清单.txt', 'wc -l 清单.txt && cat 清单.txt', 'grep 账单 来信/二.txt', 'man grep'];
+export const solution = [
+  'cat 来信/一.txt 来信/二.txt 来信/三.txt',
+  'cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议"',
+  'cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议" > 会议.txt',
+  'cat 会议.txt | wc -l',
+  'cat 来信/一.txt 来信/二.txt 来信/三.txt | grep "会议" | wc -l',
+  'grep "不存在" 会议.txt && echo "找到"',
+  'echo "检查完成"',
+];

@@ -1,6 +1,6 @@
 /**
  * 迷你 shell：解析一行命令，分发给内置命令。
- * 支持引号、> >> 重定向、&&，不支持管道——管道在正文里讲概念，沙盒里拆开做。
+ * 支持引号、> >> 重定向、&& / ||，以及本课使用的文本管道。
  */
 import { Fail, can, linesOf, modeNum, file, dir, link, HOME } from './fs.js';
 
@@ -47,24 +47,37 @@ function parseLine(line) {
       const target = tokens[++t];
       if (!target || target.op) fail("bash: syntax error near unexpected token `newline'", 2);
       current.redirect = { append: token.op === '>>', file: target.word };
-    } else if (token.op === '|') fail('（沙盒不支持管道 |。管道的意思是「左边的输出变成右边的输入」，这里请把两步分开做）', 1);
-    else if (token.op) {
-      if (current.words.length) commands.push(current);
-      current = { words: [], redirect: null, after: token.op === '&' ? ';' : token.op };
+    } else if (token.op) {
+      if (token.op === '&') fail('（沙盒不支持后台进程 &）', 2);
+      if (!current.words.length && !current.redirect) fail(`bash: syntax error near unexpected token '${token.op}'`, 2);
+      commands.push(current);
+      current = { words: [], redirect: null, after: token.op };
     } else current.words.push(token);
   }
   if (current.words.length || current.redirect) commands.push(current);
+  else if (current.after && current.after !== ';') fail('bash: syntax error: incomplete command', 2);
   return { commands, smart };
 }
 
 const fail = (message, code = 1) => { throw new Fail(message, code); };
 
 export class Out {
-  constructor() { this.lines = []; this.notes = []; this.actions = []; }
-  put(...segs) { this.lines.push(segs.map(s => (Array.isArray(s) ? s : [s, '']))); }
+  constructor(input = null, piped = false) {
+    this.lines = []; this.notes = []; this.actions = [];
+    this.input = input; this.piped = piped; this.stdout = '';
+  }
+  put(...segs) {
+    const parts = segs.map(s => (Array.isArray(s) ? s : [String(s), '']));
+    this.lines.push(parts);
+    this.stdout += parts.map(([t]) => t).join('') + '\n';
+  }
+  write(text) {
+    this.stdout += text;
+    for (const line of linesOf(text)) this.lines.push([[line, '']]);
+  }
   text(text) { for (const line of String(text).split('\n')) this.put(line); }
   note(text) { this.notes.push(text); }
-  err(text) { for (const line of String(text).split('\n')) this.put([line, 'err']); }
+  err(text) { for (const line of String(text).split('\n')) this.lines.push([[line, 'err']]); }
   plain() { return this.lines.map(segs => segs.map(([t]) => t).join('')).join('\n'); }
 }
 
@@ -84,7 +97,7 @@ const HELP = `这个沙盒里可以用的命令：
   走    cd  mkdir  touch  cp  mv  rm
   写    echo "文字" > 文件   echo "文字" >> 文件   edit 文件
   找    find  grep
-  权限  chmod 644 文件   chmod +x 文件
+  权限  chmod 644 文件   chmod u+x 文件
   其他  which  man  clear  help
 ↑ ↓ 翻看历史命令，Tab 补全命令和文件名。`;
 
@@ -97,7 +110,7 @@ const MAN = {
   rm: 'rm — 删除\n  rm 文件\n  rm -r 目录   目录必须加 -r，因为它里面可能还有东西',
   cp: 'cp — 复制\n  cp 来源 目标\n  cp -r 目录 目标',
   mv: 'mv — 移动，也用来改名\n  mv 旧名 新名\n  mv 文件 目录/',
-  chmod: 'chmod — 改权限\n  chmod 644 文件    数字：属主 rw、同组 r、其他人 r\n  chmod +x 文件     给属主加上可执行\n  chmod -w 文件     去掉属主的写权限\n九个字符从左到右是：属主、同组、其他人，各三位 rwx。',
+  chmod: 'chmod — 改权限\n  chmod 644 文件    数字：属主 rw、同组 r、其他人 r\n  chmod u+x 文件     给属主加上可执行\n  chmod u-w 文件     去掉属主的写权限\n九个字符从左到右是：属主、同组、其他人，各三位 rwx。',
   grep: 'grep — 在文件里找含某个词的行\n  grep 词 文件\n  grep -n 词 文件   行号也印出来\n  grep -i 词 文件   忽略大小写',
   find: 'find — 按名字找文件\n  find . -name "*.md"\n  find 笔记 -name "todo*"',
   echo: 'echo — 印出文字。配合 > 和 >> 就变成写文件\n  echo "一行" > 文件     覆盖写\n  echo "又一行" >> 文件  追加到末尾',
@@ -115,7 +128,7 @@ export const COMMANDS = {
     let nl = true, list = args;
     if (list[0] === '-n') { nl = false; list = list.slice(1); }
     const text = list.join(' ');
-    if (nl) out.put(text); else out.lines.push([[text, '']]);
+    if (nl) out.put(text); else out.write(text);
   },
   pwd(world, args, out) { out.put(world.cwd.length ? `${HOME}/${world.cwd.join('/')}` : HOME); },
   ls(world, args, out) {
@@ -131,6 +144,7 @@ export const COMMANDS = {
     else names = names.filter(n => !n.startsWith('.'));
     if (!names.length) return;
     if (flags.has('l')) { for (const name of names) out.put([longLine(name, name === '.' || name === '..' ? node : node.children[name]), clsOf(name === '.' || name === '..' ? node : node.children[name])]); return; }
+    if (out.piped || flags.has('1')) { for (const name of names) out.put(name); return; }
     out.put(...names.flatMap((name, i) => {
       const child = name === '.' || name === '..' ? node : node.children[name];
       return i ? [['  ', ''], [name, clsOf(child)]] : [[name, clsOf(child)]];
@@ -194,31 +208,37 @@ export const COMMANDS = {
     }
   },
   cat(world, args, out) {
-    if (!args.length) fail('cat: 后面跟文件名，例如 cat 备忘.md');
-    for (const name of args) {
-      const hit = world.at(name);
-      if (hit.node.kind === 'dir') fail(`cat: ${name}: Is a directory`);
-      if (hit.node.kind === 'link') { out.note(`（${name} 是指向 ${hit.node.target} 的链接，cat 读的是它本身，不是目标）`); continue; }
-      if (!can(hit.node, 'r')) fail(`cat: ${name}: Permission denied`);
-      for (const line of linesOf(hit.node.content)) out.put(line);
+    if (!args.length) {
+      if (out.input === null) fail('cat: 后面跟文件名，或通过管道提供输入');
+      out.write(out.input);
+      return;
     }
+    let status = 0;
+    for (const name of args) {
+      try { out.write(readText(world, name)); }
+      catch (error) {
+        if (!(error instanceof Fail)) throw error;
+        out.err(error.message);
+        status = error.code;
+      }
+    }
+    return status;
   },
   head(world, args, out) { slice(world, args, out, 'head'); },
   tail(world, args, out) { slice(world, args, out, 'tail'); },
   wc(world, args, out) {
     const { flags, rest } = FLAGS(args);
     const name = rest[0];
-    if (!name) fail('wc: 后面跟文件名');
-    const hit = world.at(name);
-    if (hit.node.kind !== 'file') fail(`wc: ${name}: Is a directory`);
-    const lines = linesOf(hit.node.content);
-    const words = hit.node.content.trim() ? hit.node.content.trim().split(/\s+/).length : 0;
-    const bytes = hit.node.content.length;
+    const content = name ? readText(world, name) : out.input;
+    if (content === null) fail('wc: 后面跟文件名，或通过管道提供输入');
+    const lines = (content.match(/\n/g) ?? []).length;
+    const words = content.trim() ? content.trim().split(/\s+/).length : 0;
+    const bytes = new TextEncoder().encode(content).length;
     const cols = [];
-    if (!flags.size || flags.has('l')) cols.push(String(lines.length).padStart(7));
+    if (!flags.size || flags.has('l')) cols.push(String(lines).padStart(7));
     if (!flags.size || flags.has('w')) cols.push(String(words).padStart(7));
     if (!flags.size || flags.has('c')) cols.push(String(bytes).padStart(7));
-    out.put(`${cols.join('')} ${name}`);
+    out.put(`${cols.join('')}${name ? ` ${name}` : ''}`);
   },
   cp(world, args, out) {
     const { flags, rest } = FLAGS(args);
@@ -226,9 +246,14 @@ export const COMMANDS = {
     if (!from || !to) fail('cp: missing file operand');
     const src = world.at(from);
     if (src.node.kind === 'dir' && !flags.has('r')) fail(`cp: -r not specified; omitting directory '${from}'`);
-    const dest = world.resolve(to.endsWith('/') ? `${to}${src.name}` : to);
+    let dest = world.resolve(to);
+    if (dest.node?.kind === 'dir') dest = world.resolve(`${to.replace(/\/$/, '')}/${src.name}`);
+    else if (to.endsWith('/')) fail(`cp: ${to}: Not a directory`);
+    if (!dest.parent || dest.node?.kind === 'dir') fail('cp: 沙盒不支持覆盖目录树');
+    if (src.parent === dest.parent && src.name === dest.name) fail('cp: 来源和目标是同一个文件');
+    if (!(dest.node ? can(dest.node, 'w') : can(dest.parent, 'w'))) fail(`cp: ${to}: Permission denied`);
     if (src.node.kind === 'dir') dest.parent.children[dest.name] = clone(src.node);
-    else dest.parent.children[dest.name] = file(src.node.content, src.node.mode);
+    else dest.parent.children[dest.name] = file(readText(world, from), src.node.mode);
   },
   mv(world, args, out) {
     const [from, to] = args;
@@ -253,7 +278,7 @@ export const COMMANDS = {
   },
   chmod(world, args, out) {
     const [spec, name] = args;
-    if (!spec || !name) fail('chmod: 用法是 chmod 644 文件 或 chmod +x 文件');
+    if (!spec || !name) fail('chmod: 用法是 chmod 644 文件 或 chmod u+x 文件');
     const hit = world.at(name);
     if (/^[0-7]{3}$/.test(spec)) {
       hit.node.mode = [...spec].map(d => {
@@ -264,13 +289,15 @@ export const COMMANDS = {
     }
     const m = spec.match(/^([ugoa]*)([+-])([rwx]+)$/);
     if (!m) fail(`chmod: invalid mode: '${spec}'`);
-    const who = m[1] || 'u';
+    const who = m[1] || 'a';
     const indexes = [];
     if (who.includes('u') || who.includes('a')) indexes.push(0);
     if (who.includes('g') || who.includes('a')) indexes.push(3);
     if (who.includes('o') || who.includes('a')) indexes.push(6);
     const chars = hit.node.mode.split('');
     for (const start of indexes) for (const bit of m[3]) {
+      // 省略身份时按沙盒固定的 umask 022 过滤；显式 u/g/o/a 不过滤。
+      if (!m[1] && ((0o022 >> (6 - start)) & ({ r: 4, w: 2, x: 1 }[bit]))) continue;
       const pos = start + (bit === 'r' ? 0 : bit === 'w' ? 1 : 2);
       chars[pos] = m[2] === '+' ? bit : '-';
     }
@@ -279,12 +306,12 @@ export const COMMANDS = {
   grep(world, args, out) {
     const { flags, rest } = FLAGS(args);
     const [needle, name] = rest;
-    if (!needle || !name) fail('grep: 用法是 grep 词 文件');
-    const hit = world.at(name);
-    if (hit.node.kind !== 'file') fail(`grep: ${name}: Is a directory`);
+    if (needle === undefined) fail('grep: 用法是 grep 词 文件，或通过管道提供输入', 2);
+    const content = name ? readText(world, name) : out.input;
+    if (content === null) fail('grep: 后面跟文件名，或通过管道提供输入', 2);
     const want = flags.has('i') ? needle.toLowerCase() : needle;
     let n = 0;
-    linesOf(hit.node.content).forEach((line, i) => {
+    linesOf(content).forEach((line, i) => {
       const hay = flags.has('i') ? line.toLowerCase() : line;
       if (!hay.includes(want)) return;
       n++;
@@ -380,6 +407,13 @@ function clone(node) {
   return dir(children, node.mode);
 }
 
+function readText(world, name) {
+  const hit = world.at(name);
+  if (hit.node.kind !== 'file') fail(`${name}: 沙盒只支持读取普通文件`);
+  if (!can(hit.node, 'r')) fail(`${name}: Permission denied`);
+  return hit.node.content;
+}
+
 function slice(world, args, out, side) {
   let n = 10;
   const rest = [];
@@ -389,12 +423,12 @@ function slice(world, args, out, side) {
     else rest.push(args[i]);
   }
   const name = rest[0];
-  if (!name) fail(`${side}: 后面跟文件名`);
-  const hit = world.at(name);
-  if (hit.node.kind !== 'file') fail(`${side}: ${name}: Is a directory`);
-  const lines = linesOf(hit.node.content);
-  const picked = side === 'head' ? lines.slice(0, n) : lines.slice(-n);
-  for (const line of picked) out.put(line);
+  if (!Number.isInteger(n) || n < 0) fail(`${side}: 行数必须是非负整数`);
+  const content = name ? readText(world, name) : out.input;
+  if (content === null) fail(`${side}: 后面跟文件名，或通过管道提供输入`);
+  const lines = content.match(/[^\n]*\n|[^\n]+$/g) ?? [];
+  const picked = n === 0 ? [] : side === 'head' ? lines.slice(0, n) : lines.slice(-n);
+  out.write(picked.join(''));
 }
 
 export function expand(world, words) {
@@ -414,10 +448,20 @@ export function runLine(world, line) {
   try {
     const { commands, smart } = parseLine(line.trim());
     if (smart) out.note('（提示：真终端只认英文引号。沙盒这次替你当成引号处理了）');
-    for (const command of commands) {
-      if (command.after === '&&' && status !== 0) continue;
-      if (command.after === '||' && status === 0) continue;
-      status = exec(world, command, out);
+    for (let i = 0; i < commands.length;) {
+      const first = commands[i];
+      let end = i + 1;
+      while (end < commands.length && commands[end].after === '|') end++;
+      const skip = (first.after === '&&' && status !== 0) || (first.after === '||' && status === 0);
+      if (!skip) {
+        let input = null;
+        for (let j = i; j < end; j++) {
+          const result = exec(world, commands[j], out, input, j + 1 < end);
+          status = result.status;
+          input = result.stdout;
+        }
+      }
+      i = end;
     }
   } catch (error) {
     if (!(error instanceof Fail)) throw error;
@@ -429,24 +473,26 @@ export function runLine(world, line) {
   return out;
 }
 
-function exec(world, command, out) {
+function exec(world, command, out, input, piped) {
   const argv = expand(world, command.words);
-  const target = command.redirect ? new Out() : out;
+  const redirected = !!command.redirect;
+  const target = new Out(input, piped || redirected);
   let status = 0;
   try {
+    // Shell 先打开（可能清空）目标，再执行命令；标准错误不进入重定向或管道。
+    if (redirected) world.writeFile(command.redirect.file, '', { append: command.redirect.append });
     status = dispatch(world, argv, target) ?? 0;
+    if (redirected) world.writeFile(command.redirect.file, target.stdout, { append: true });
   } catch (error) {
     if (!(error instanceof Fail)) throw error;
     target.err(error.message);
     status = error.code;
   }
-  if (command.redirect) {
-    const text = target.lines.map(segs => segs.map(([t]) => t).join('')).join('\n');
-    const body = target.lines.length ? text + '\n' : '';
-    world.writeFile(command.redirect.file, body, { append: command.redirect.append });
-    out.actions.push(...target.actions);
-  }
-  return status;
+  out.lines.push(...target.lines.filter(segs => (!piped && !redirected) || segs.some(([, cls]) => cls === 'err')));
+  if (!piped && !redirected) out.stdout += target.stdout;
+  out.notes.push(...target.notes);
+  out.actions.push(...target.actions);
+  return { status, stdout: redirected ? '' : target.stdout };
 }
 
 function dispatch(world, argv, out) {

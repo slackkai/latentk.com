@@ -31,7 +31,7 @@ export function mount(config) {
     <header class="lab-head">
       <span class="lab-tag">终端</span>
       <h1 class="lab-title">${esc(config.title)}</h1>
-      <button type="button" class="lab-btn is-quiet" data-reset>↺ 重来</button>
+      <button type="button" class="lab-btn is-quiet" data-reset title="回到这一课开始时的样子">↺ 重来</button>
     </header>
     <div class="stage"></div>
     <div class="task" aria-live="polite"></div>
@@ -72,9 +72,9 @@ export function mount(config) {
     render(false);
   }
 
-  function print(html) {
+  function print(html, extra = '') {
     const div = document.createElement('div');
-    div.className = 't-line';
+    div.className = `t-line${extra ? ` ${extra}` : ''}`;
     div.innerHTML = html || '&#8203;';
     out.append(div);
   }
@@ -86,9 +86,9 @@ export function mount(config) {
 
   function run(line) {
     const text = line.trim();
-    print(`${prompt()} ${esc(text)}`);
+    print(`${prompt()} ${esc(text)}`, 't-cmd');
     if (!text) return;
-    if (history.at(-1) !== text) history.push(text);
+    if (history[history.length - 1] !== text) history.push(text);
     historyPos = history.length;
     const result = runLine(world, text);
     if (result.actions.some(a => a.type === 'clear')) out.innerHTML = '';
@@ -129,9 +129,12 @@ export function mount(config) {
     el.innerHTML = `
       <span class="task-count">${done ? '✓' : `任务 <b>${taskIndex + 1}</b>/${tasks.length}`}</span>
       <p class="task-text">${done ? `<span class="stamp">本课完成</span>${config.done ?? ''}` : task.text}</p>
-      ${done && config.next ? `<button type="button" class="lab-btn is-quiet" data-next="${esc(config.next)}">下一课 →</button>`
-        : hint ? `<button type="button" class="lab-btn is-quiet" data-hint="${esc(hint)}">提示</button>` : '<span></span>'}
-      <div class="task-dots">${tasks.map((_, i) => `<i class="${i < taskIndex ? 'done' : i === taskIndex ? 'now' : ''}"></i>`).join('')}</div>
+      ${done && config.next
+        ? `<button type="button" class="lab-btn is-quiet" data-next="${esc(config.next)}" title="跳到正文里的下一课">下一课 →</button>`
+        : hint
+          ? `<button type="button" class="lab-btn is-quiet" data-hint="${esc(hint)}" title="把提示命令填进终端">提示</button>`
+          : '<span></span>'}
+      <div class="task-dots" aria-hidden="true">${tasks.map((_, i) => `<i class="${i < taskIndex ? 'done' : i === taskIndex ? 'now' : ''}"></i>`).join('')}</div>
       <details class="task-list"${listOpen ? ' open' : ''}><summary>全部任务</summary><ol>${tasks.map((t, i) => `<li class="${i < taskIndex ? 'done' : i === taskIndex ? 'now' : ''}">${t.text}</li>`).join('')}</ol></details>`;
   }
 
@@ -184,19 +187,27 @@ export function mount(config) {
     const pool = words.length === 1 ? WORDS : world.list(world.here());
     const hits = [...new Set(pool)].filter(w => w.startsWith(word)).sort();
     if (!hits.length) return false;
-    if (hits.length === 1) {
-      const value = before.slice(0, -word.length) + hits[0] + ' ';
+    const common = hits.reduce((a, b) => { let i = 0; while (i < a.length && a[i] === b[i]) i++; return a.slice(0, i); });
+    if (hits.length === 1 || common.length > word.length) {
+      const insert = hits.length === 1 ? `${hits[0]} ` : common;
+      const value = before.slice(0, before.length - word.length) + insert;
       input.value = value + input.value.slice(caret);
       input.setSelectionRange(value.length, value.length);
-    } else print(`<span class="t-hint">${esc(hits.join('  '))}</span>`);
+    } else {
+      print(`${prompt()} ${esc(input.value)}`, 't-cmd');
+      print(`<span class="t-hint">${esc(hits.join('  '))}</span>`);
+      out.scrollTop = out.scrollHeight;
+    }
     return true;
   }
 
   form.addEventListener('submit', event => { event.preventDefault(); const v = input.value; input.value = ''; run(v); });
   input.addEventListener('keydown', event => {
-    if (event.key === 'ArrowUp' && historyPos > 0) { event.preventDefault(); fill(history[--historyPos]); }
+    if (event.key === 'ArrowUp' && historyPos > 0) { event.preventDefault(); historyPos--; fill(history[historyPos]); }
     else if (event.key === 'ArrowDown' && historyPos < history.length) { event.preventDefault(); historyPos++; fill(history[historyPos] ?? ''); }
-    else if (event.key === 'Tab' && complete()) event.preventDefault();
+    else if (event.key === 'Tab' && !event.shiftKey && input.value.trim() && complete()) event.preventDefault();
+    else if (event.key === 'l' && event.ctrlKey) { event.preventDefault(); out.innerHTML = ''; }
+    else if (event.key === 'c' && event.ctrlKey && !String(window.getSelection())) { event.preventDefault(); print(`${prompt()} ${esc(input.value)}^C`, 't-cmd'); input.value = ''; }
   });
   root.addEventListener('click', event => {
     const t = event.target;
@@ -209,10 +220,12 @@ export function mount(config) {
     const open = t.closest('[data-open]');
     if (open) {
       const node = world.here().children[open.dataset.open];
-      fill(node?.kind === 'dir' ? `cd ${open.dataset.open}` : `cat ${open.dataset.open}`);
+      const path = JSON.stringify(open.dataset.open);
+      fill(node?.kind === 'dir' ? `cd ${path}` : `cat ${path}`);
       return;
     }
-    if (t.closest('[data-reset]')) start();
+    if (t.closest('[data-reset]')) { start(); return; }
+    if (t.closest('.term-out') && !String(window.getSelection())) input.focus({ preventScroll: true });
   });
 
   start();
