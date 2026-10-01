@@ -60,6 +60,7 @@ export const en: UI = {
     pinned: '📌 Pinned',
   },
   dailies: {
+    readFull: 'Read full entry',
     recentWeeks: (n) => `Last ${n} weeks`,
     wrote: (n) => `${n} dailies`,
     less: 'Less',

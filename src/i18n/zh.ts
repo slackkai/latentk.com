@@ -59,6 +59,7 @@ export const zh = {
     pinned: '📌 置顶',
   },
   dailies: {
+    readFull: '阅读全文',
     recentWeeks: (n: number) => `最近 ${n} 周`,
     wrote: (n: number) => `写了 ${n} 条日常`,
     less: '少',

@@ -4,6 +4,7 @@ import { withBase } from '../utils/url';
  * 日常条目：时间线形式，短内容直接渲染在列表里
  */
 import { formatDate } from '../utils/content';
+import { t } from '../i18n';
 import Tags from './Tags.astro';
 
 interface Props {
@@ -29,21 +30,75 @@ const { href, title, date, mood, location, tags = [], images = [], index = 0, tr
       {location && <span> · 📍{location}</span>}
     </p>
     {title && <h3 class="daily-title" transition:name={transitionName}><a href={withBase(href)}>{title}</a></h3>}
-    <div class="daily-content">
-      <slot />
-    </div>
-    {
-      images.length > 0 && (
-        <div class="daily-images">
-          {images.map((src) => (
-            <img src={withBase(src)} alt="" loading="lazy" decoding="async" />
-          ))}
+    <daily-preview>
+      <div class="daily-content">
+        <div class="daily-content-inner">
+          <slot />
+          {
+            images.length > 0 && (
+              <div class="daily-images">
+                {images.map((src) => (
+                  <img src={withBase(src)} alt="" loading="lazy" decoding="async" />
+                ))}
+              </div>
+            )
+          }
         </div>
-      )
-    }
+      </div>
+      <a class="daily-read-more" href={withBase(href)} aria-label={`${t.dailies.readFull}: ${title ?? formatDate(date)}`}>
+        {t.dailies.readFull} <span aria-hidden="true">→</span>
+      </a>
+    </daily-preview>
     {tags.length > 0 && <Tags tags={tags} small />}
   </div>
 </li>
+
+<script>
+  class DailyPreview extends HTMLElement {
+    private observer?: ResizeObserver;
+    private originalTabIndexes = new Map<HTMLElement, string | null>();
+
+    connectedCallback() {
+      const content = this.querySelector<HTMLElement>('.daily-content')!;
+      const inner = this.querySelector<HTMLElement>('.daily-content-inner')!;
+      const link = this.querySelector<HTMLElement>('.daily-read-more')!;
+      const update = () => {
+        const truncated = inner.getBoundingClientRect().height > content.clientHeight + 1;
+        this.toggleAttribute('data-truncated', truncated);
+        link.hidden = !truncated;
+
+        // Clipped links and controls must not become invisible keyboard stops.
+        const visibleBottom = content.getBoundingClientRect().bottom - 48;
+        inner.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, iframe, [tabindex], summary, audio[controls], video[controls]').forEach((element) => {
+          if (truncated && element.getBoundingClientRect().bottom > visibleBottom) {
+            if (!this.originalTabIndexes.has(element)) this.originalTabIndexes.set(element, element.getAttribute('tabindex'));
+            element.tabIndex = -1;
+          } else if (this.originalTabIndexes.has(element)) {
+            const original = this.originalTabIndexes.get(element)!;
+            if (original === null) element.removeAttribute('tabindex');
+            else element.setAttribute('tabindex', original);
+            this.originalTabIndexes.delete(element);
+          }
+        });
+      };
+      this.observer = new ResizeObserver(update);
+      this.observer.observe(content);
+      this.observer.observe(inner);
+      update();
+    }
+
+    disconnectedCallback() {
+      this.observer?.disconnect();
+      for (const [element, original] of this.originalTabIndexes) {
+        if (original === null) element.removeAttribute('tabindex');
+        else element.setAttribute('tabindex', original);
+      }
+      this.originalTabIndexes.clear();
+    }
+  }
+
+  if (!customElements.get('daily-preview')) customElements.define('daily-preview', DailyPreview);
+</script>
 
 <style>
   .daily {
@@ -75,6 +130,7 @@ const { href, title, date, mood, location, tags = [], images = [], index = 0, tr
     box-shadow: var(--shadow-hand-sm);
   }
   .daily-body {
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
@@ -91,18 +147,84 @@ const { href, title, date, mood, location, tags = [], images = [], index = 0, tr
     color: var(--marker);
   }
   .daily-title {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
+    line-height: 1.4;
   }
   .daily-title a:hover {
     color: var(--marker);
   }
+  daily-preview {
+    display: block;
+  }
+  .daily-content {
+    max-height: 20rem;
+    overflow: clip;
+    font-size: 1rem;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+  }
+  .daily-content-inner {
+    display: flow-root;
+  }
+  daily-preview[data-truncated] .daily-content {
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 3rem), transparent);
+  }
   .daily-content :global(p) {
-    margin: 0.25rem 0;
+    margin: 0.4rem 0;
+  }
+  .daily-content :global(h1),
+  .daily-content :global(h2) {
+    font-size: 1.15rem;
+  }
+  .daily-content :global(h3) {
+    font-size: 1.05rem;
+  }
+  .daily-content :global(h4),
+  .daily-content :global(h5),
+  .daily-content :global(h6) {
+    font-size: 1rem;
+  }
+  .daily-content :global(:is(h1, h2, h3, h4, h5, h6)) {
+    line-height: 1.5;
+    margin: 0.85rem 0 0.35rem;
+  }
+  .daily-content-inner > :global(:first-child) {
+    margin-top: 0;
+  }
+  .daily-content-inner > :global(:last-child) {
+    margin-bottom: 0;
+  }
+  .daily-content :global(ul),
+  .daily-content :global(ol) {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+  }
+  .daily-content :global(blockquote) {
+    margin: 0.5rem 0;
+    padding-left: 0.8rem;
+    border-left: 2px solid var(--pencil-25);
+  }
+  .daily-content :global(pre) {
+    max-width: 100%;
+    overflow-x: auto;
+    font-size: 0.85em;
   }
   .daily-content :global(a) {
     color: var(--pen);
     text-decoration: underline wavy;
     text-underline-offset: 3px;
+  }
+  .daily-read-more {
+    display: inline-block;
+    margin-top: 0.65rem;
+    color: var(--pen);
+    font-size: 0.9rem;
+  }
+  .daily-read-more[hidden] {
+    display: none;
+  }
+  .daily-read-more:hover {
+    color: var(--marker);
   }
   .daily-images {
     display: grid;
@@ -115,5 +237,10 @@ const { href, title, date, mood, location, tags = [], images = [], index = 0, tr
     object-fit: cover;
     border: 2px solid var(--pencil);
     border-radius: var(--radius-wobble-sm);
+  }
+  @media (max-width: 640px) {
+    .daily-content {
+      max-height: 18rem;
+    }
   }
 </style>
