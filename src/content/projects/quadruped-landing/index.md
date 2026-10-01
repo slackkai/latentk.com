@@ -3,6 +3,7 @@ title: '四足机器人落地控制器'
 date: 2026-09-01
 description: '在 Isaac Lab 里训练一个能从空中落地并站稳的策略，然后部署到 Go2。'
 status: active
+draft: true
 stack: ['Isaac Lab', 'PyTorch', 'ROS 2', 'Go2']
 tags: ['robotics', 'rl', 'sim2real']
 links:

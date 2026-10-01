@@ -66,6 +66,12 @@ test('custom body renderer updates only for text changes and resolves delayed CM
     assert.equal(src, assetUrl);
     assert.equal(scheduled, undefined);
   }
+  let sourceSet = './attachments/chart-mobile.svg';
+  const source = { dataset: {}, getAttribute: () => sourceSet, setAttribute: (_, value) => { sourceSet = value; } };
+  instance.root = { querySelectorAll: selector => selector === 'source[srcset]' ? [source] : [] };
+  assetUrl = 'blob:responsive-chart';
+  instance.resolveMedia(0);
+  assert.equal(sourceSet, 'blob:responsive-chart', 'the mobile picture source needs its own CMS asset URL');
   instance.componentWillUnmount();
 });
 test('empty optional fields disappear, status labels are readable, unsafe links are not rendered', () => {
@@ -81,4 +87,11 @@ test('relative cover and gallery paths use native reactive image previews even b
   assert.equal(nodes(output).filter(n=>n.tag==='cms-widget' && n.props.name==='cover').length,1);
   const daily = render('dailies',{images:['./attachments/photo.webp'],body:'正文'}, () => undefined);
   assert.equal(nodes(daily).filter(n=>n.tag==='cms-widget' && n.props.name==='images').length,1);
+});
+
+test('resource verification appears only when populated', () => {
+  const output = render('library', { title: 'Resource', reviewed: '2026-09-30' });
+  const text = strings(output).join(' ');
+  assert.ok(text.includes('资源核验 2026-09-30'));
+  assert.ok(!strings(render('library', { title: 'Resource' })).join(' ').includes('资源核验'));
 });

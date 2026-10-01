@@ -1,0 +1,105 @@
+{
+  "lang": "zh",
+  "defaultPalette": "blue",
+  "sections": {
+    "academic": {
+      "enabled": true,
+      "emoji": "🎓",
+      "label": "Academic",
+      "subtitle": "学术",
+      "desc": "论文笔记、研究记录与发表。",
+      "rotate": "-1deg"
+    },
+    "insight": {
+      "enabled": true,
+      "emoji": "✍️",
+      "label": "Insight",
+      "subtitle": "洞见",
+      "desc": "长文、观点与方法论。",
+      "rotate": "1deg"
+    },
+    "dailies": {
+      "enabled": true,
+      "emoji": "📸",
+      "label": "Dailies",
+      "subtitle": "日常",
+      "desc": "碎碎念、日志与生活切片。",
+      "rotate": "-0.5deg"
+    },
+    "library": {
+      "enabled": true,
+      "emoji": "📚",
+      "label": "Library",
+      "subtitle": "资料库",
+      "desc": "书、论文、工具与链接的收藏架。",
+      "rotate": "0.7deg"
+    },
+    "projects": {
+      "enabled": true,
+      "emoji": "🛠️",
+      "label": "Projects",
+      "subtitle": "项目",
+      "desc": "机器人、软件与硬件项目。",
+      "rotate": "-0.7deg"
+    }
+  },
+  "navigation": [
+    "home",
+    "academic",
+    "insight",
+    "dailies",
+    "library",
+    "projects",
+    "tags",
+    "about"
+  ],
+  "features": {
+    "search": true,
+    "paletteSwitcher": true,
+    "readingProgress": true,
+    "toc": true,
+    "postMeta": true,
+    "relatedPosts": true,
+    "heatmap": true,
+    "guestbook": true,
+    "nowCard": true,
+    "codeCopy": true,
+    "imageZoom": true,
+    "cms": true
+  },
+  "home": {
+    "hero": "arm",
+    "badge": "🤖 具身 · embodied",
+    "armIdle": true
+  },
+  "academic": {
+    "topics": [
+      {
+        "emoji": "🦾",
+        "title": "机器人学习",
+        "desc": "让机器人从数据和交互中学会技能，而不是靠人手写控制律。"
+      },
+      {
+        "emoji": "🧠",
+        "title": "具身智能",
+        "desc": "感知、决策与动作在同一个身体里闭环。"
+      },
+      {
+        "emoji": "🔁",
+        "title": "Sim-to-Real",
+        "desc": "在仿真里训练，在真实世界里成立。"
+      }
+    ]
+  },
+  "guestbook": {
+    "web3formsKey": "204f3fa9-768b-44aa-a229-9790b0d9a956"
+  },
+  "library": {
+    "pageSize": 24
+  },
+  "navLabels": {
+    "home": "Home",
+    "tags": "Tags",
+    "about": "About"
+  }
+}

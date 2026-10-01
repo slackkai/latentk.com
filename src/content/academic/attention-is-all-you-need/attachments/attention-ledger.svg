@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="332.82pt" height="294.974794pt" viewBox="0 0 332.82 294.974794" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>LatentK · original constructed example</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 294.974794
+L 332.82 294.974794
+L 332.82 0
+L 0 0
+z
+" style="fill: #fbfaf6"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 82.524 111.911829
+L 133.674 111.911829
+Q 136.743 111.911829 136.743 108.7811
+L 136.743 84.257053
+Q 136.743 81.126324 133.674 81.126324
+L 82.524 81.126324
+Q 79.455 81.126324 79.455 84.257053
+L 79.455 108.7811
+Q 79.455 111.911829 82.524 111.911829
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 149.019 111.911829
+L 200.169 111.911829
+Q 203.238 111.911829 203.238 108.7811
+L 203.238 84.257053
+Q 203.238 81.126324 200.169 81.126324
+L 149.019 81.126324
+Q 145.95 81.126324 145.95 84.257053
+L 145.95 108.7811
+Q 145.95 111.911829 149.019 111.911829
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 215.514 111.911829
+L 266.664 111.911829
+Q 269.733 111.911829 269.733 108.7811
+L 269.733 84.257053
+Q 269.733 81.126324 266.664 81.126324
+L 215.514 81.126324
+Q 212.445 81.126324 212.445 84.257053
+L 212.445 108.7811
+Q 212.445 111.911829 215.514 111.911829
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 82.524 153.654888
+L 133.674 153.654888
+Q 136.743 153.654888 136.743 150.524159
+L 136.743 126.000112
+Q 136.743 122.869382 133.674 122.869382
+L 82.524 122.869382
+Q 79.455 122.869382 79.455 126.000112
+L 79.455 150.524159
+Q 79.455 153.654888 82.524 153.654888
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 149.019 153.654888
+L 200.169 153.654888
+Q 203.238 153.654888 203.238 150.524159
+L 203.238 126.000112
+Q 203.238 122.869382 200.169 122.869382
+L 149.019 122.869382
+Q 145.95 122.869382 145.95 126.000112
+L 145.95 150.524159
+Q 145.95 153.654888 149.019 153.654888
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 215.514 153.654888
+L 266.664 153.654888
+Q 269.733 153.654888 269.733 150.524159
+L 269.733 126.000112
+Q 269.733 122.869382 266.664 122.869382
+L 215.514 122.869382
+Q 212.445 122.869382 212.445 126.000112
+L 212.445 150.524159
+Q 212.445 153.654888 215.514 153.654888
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 82.524 195.397947
+L 133.674 195.397947
+Q 136.743 195.397947 136.743 192.267218
+L 136.743 167.743171
+Q 136.743 164.612441 133.674 164.612441
+L 82.524 164.612441
+Q 79.455 164.612441 79.455 167.743171
+L 79.455 192.267218
+Q 79.455 195.397947 82.524 195.397947
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 149.019 195.397947
+L 200.169 195.397947
+Q 203.238 195.397947 203.238 192.267218
+L 203.238 167.743171
+Q 203.238 164.612441 200.169 164.612441
+L 149.019 164.612441
+Q 145.95 164.612441 145.95 167.743171
+L 145.95 192.267218
+Q 145.95 195.397947 149.019 195.397947
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 215.514 195.397947
+L 266.664 195.397947
+Q 269.733 195.397947 269.733 192.267218
+L 269.733 167.743171
+Q 269.733 164.612441 266.664 164.612441
+L 215.514 164.612441
+Q 212.445 164.612441 212.445 167.743171
+L 212.445 192.267218
+Q 212.445 195.397947 215.514 195.397947
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 82.524 237.141006
+L 133.674 237.141006
+Q 136.743 237.141006 136.743 234.010276
+L 136.743 209.486229
+Q 136.743 206.3555 133.674 206.3555
+L 82.524 206.3555
+Q 79.455 206.3555 79.455 209.486229
+L 79.455 234.010276
+Q 79.455 237.141006 82.524 237.141006
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 149.019 237.141006
+L 200.169 237.141006
+Q 203.238 237.141006 203.238 234.010276
+L 203.238 209.486229
+Q 203.238 206.3555 200.169 206.3555
+L 149.019 206.3555
+Q 145.95 206.3555 145.95 209.486229
+L 145.95 234.010276
+Q 145.95 237.141006 149.019 237.141006
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 215.514 237.141006
+L 266.664 237.141006
+Q 269.733 237.141006 269.733 234.010276
+L 269.733 209.486229
+Q 269.733 206.3555 266.664 206.3555
+L 215.514 206.3555
+Q 212.445 206.3555 212.445 209.486229
+L 212.445 234.010276
+Q 212.445 237.141006 215.514 237.141006
+z
+" clip-path="url(#p9a03456250)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263044" x="23.19" y="28.9475" transform="rotate(-0 23.19 28.9475)">一次注意力的账本</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 11px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263044" x="23.19" y="48.775453" transform="rotate(-0 23.19 48.775453)">三个位置 · 每行都来自同一份构造数据</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #3b4f9e" x="107.5875" y="76.952018" transform="rotate(-0 107.5875 76.952018)">位置 1</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #3b4f9e" x="174.0825" y="76.952018" transform="rotate(-0 174.0825 76.952018)">位置 2</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #3b4f9e" x="240.5775" y="76.952018" transform="rotate(-0 240.5775 76.952018)">位置 3</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 12px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263044" x="22.167" y="99.56287" transform="rotate(-0 22.167 99.56287)">打分</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="108.099" y="100.099155" transform="rotate(-0 108.099 100.099155)">0</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="174.594" y="100.099155" transform="rotate(-0 174.594 100.099155)">ln 2</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="241.089" y="100.099155" transform="rotate(-0 241.089 100.099155)">ln 3</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 12px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263044" x="22.167" y="141.305929" transform="rotate(-0 22.167 141.305929)">指数</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="108.099" y="141.842213" transform="rotate(-0 108.099 141.842213)">1</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="174.594" y="141.842213" transform="rotate(-0 174.594 141.842213)">2</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="241.089" y="141.842213" transform="rotate(-0 241.089 141.842213)">3</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 12px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263044" x="22.167" y="183.048987" transform="rotate(-0 22.167 183.048987)">权重</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="108.099" y="183.585272" transform="rotate(-0 108.099 183.585272)">1/6</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="174.594" y="183.585272" transform="rotate(-0 174.594 183.585272)">2/6</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="241.089" y="183.585272" transform="rotate(-0 241.089 183.585272)">3/6</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 12px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263044" x="22.167" y="224.792046" transform="rotate(-0 22.167 224.792046)">值 × 权重</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="108.099" y="225.328331" transform="rotate(-0 108.099 225.328331)">0 × 1/6</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="174.594" y="225.328331" transform="rotate(-0 174.594 225.328331)">3 × 2/6</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #263044" x="241.089" y="225.328331" transform="rotate(-0 241.089 225.328331)">6 × 3/6</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 20px; font-family: 'Microsoft YaHei'; text-anchor: middle; fill: #bc5635" x="166.41" y="276.796912" transform="rotate(-0 166.41 276.796912)">0 + 1 + 3 = 4</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p9a03456250">
+   <rect x="12.96" y="15.902794" width="306.9" height="266.112"/>
+  </clipPath>
+ </defs>
+</svg>

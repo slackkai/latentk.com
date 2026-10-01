@@ -8,6 +8,9 @@
  */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { el, text } from './nodes.mjs';
+export { el, text } from './nodes.mjs';
+import renderPhotos from './photos.mjs';
 import { isRelativeUrl, rewriteHtmlUrls } from '../utils/content-urls.mjs';
 
 export const DEFAULT_LABELS = {
@@ -22,8 +25,6 @@ export const DEFAULT_LABELS = {
 
 const CLIP_SVG = '<svg class="clip" viewBox="0 0 24 48" aria-hidden="true"><path d="M8 44 V10 a4 4 0 0 1 8 0 V38 a2 2 0 0 1 -4 0 V14" /></svg>';
 
-export const el = (hName, hProperties = {}, children = []) => ({ type: 'notebookElement', data: { hName, hProperties }, children });
-export const text = value => ({ type: 'text', value });
 const html = value => ({ type: 'html', value });
 const flag = (attrs, names) => names.find(name => name in attrs) ?? String(attrs.class ?? '').split(/\s+/).find(name => names.includes(name));
 const int = (value, min, max, fallback) => {
@@ -35,13 +36,6 @@ const takeLabel = node => (node.children[0]?.data?.directiveLabel ? node.childre
 const set = (node, hName, hProperties, children) => {
   node.data = { hName, hProperties };
   if (children) node.children = children;
-};
-const collectImages = (nodes, out = []) => {
-  for (const node of nodes) {
-    if (node.type === 'image') out.push(node);
-    else if (node.children) collectImages(node.children, out);
-  }
-  return out;
 };
 const withClass = (node, className) => {
   node.data = { ...(node.data ?? {}), hProperties: { ...(node.data?.hProperties ?? {}), className } };
@@ -112,22 +106,7 @@ export const directives = {
       ]);
     },
   },
-  photos: {
-    variants: ['scatter'],
-    container(node, attrs) {
-      const images = collectImages(node.children);
-      if (images.length === 0) return false;
-      const cols = int(attrs.cols, 1, 4, images.length === 1 ? 1 : 2);
-      const figures = images.map(image => {
-        const caption = image.title || image.alt;
-        return el('figure', { className: ['photo'] }, [image, ...(caption ? [el('figcaption', {}, [text(caption)])] : [])]);
-      });
-      set(node, 'div', {
-        className: ['photos', ...(images.length === 1 ? ['photos-single'] : []), ...('scatter' in attrs ? ['photos-scatter'] : [])],
-        style: `--cols:${cols}`,
-      }, figures);
-    },
-  },
+  photos: { variants: ['scatter'], container: renderPhotos },
   fold: {
     variants: ['open'],
     container(node, attrs, ctx) {

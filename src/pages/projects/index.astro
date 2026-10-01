@@ -1,4 +1,5 @@
 ---
+import { t } from '../../i18n';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import { SECTIONS } from '../../config';
@@ -9,7 +10,7 @@ const projects = (await getPosts('projects')).filter((p) => !isProjectDoc(p));
 const sec = SECTIONS.projects;
 const featured = projects.filter((p) => p.data.featured);
 const rest = projects.filter((p) => !p.data.featured);
-const STATUS_LABEL: Record<string, string> = { active: '进行中', done: '已完成', archived: '已归档', idea: '想法' };
+const STATUS_LABEL = t.projects.status;
 const statuses = [...new Set(projects.map((p) => p.data.status))];
 ---
 
@@ -21,9 +22,9 @@ const statuses = [...new Set(projects.map((p) => p.data.status))];
 
     {
       statuses.length > 1 && (
-        <div class="filters reveal" style="--i:3" role="group" aria-label="按状态筛选">
+        <div class="filters reveal" style="--i:3" role="group" aria-label={t.common.filterByStatus}>
           <button class="hand-btn small is-on" data-status="all">
-            全部
+            {t.common.all}
           </button>
           {statuses.map((s) => (
             <button class="hand-btn small" data-status={s}>
@@ -43,7 +44,7 @@ const statuses = [...new Set(projects.map((p) => p.data.status))];
         ))
       }
     </div>
-    {projects.length === 0 && <p class="muted">还没有项目。</p>}
+    {projects.length === 0 && <p class="muted">{t.projects.none}</p>}
   </section>
 </BaseLayout>
 

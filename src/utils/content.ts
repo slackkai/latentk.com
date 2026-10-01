@@ -3,6 +3,7 @@ import { isEnabled } from '../config';
 import { withBase } from './url';
 import { t } from '../i18n';
 import { contentDir, resolveContentUrl } from './content-urls.mjs';
+import { readingStats as countReading, relatedTo as rankRelated } from './editorial.mjs';
 
 type PostCollection = 'academic' | 'insight' | 'dailies' | 'library' | 'projects';
 
@@ -108,16 +109,7 @@ export function formatDate(date: Date, style: 'long' | 'short' | 'month' = 'long
    阅读统计：中文按字、英文按词，分别按 400 字/分、200 词/分估算
    ------------------------------------------------------------------ */
 export function readingStats(body: string | undefined): { words: number; minutes: number } {
-  if (!body) return { words: 0, minutes: 0 };
-  const text = body
-    .replace(/```[\s\S]*?```/g, ' ') // 代码块不计
-    .replace(/\$\$[\s\S]*?\$\$/g, ' ') // 公式不计
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/^---[\s\S]*?---/, ' ');
-  const cjk = (text.match(/[一-鿿㐀-䶿]/g) ?? []).length;
-  const latin = (text.replace(/[一-鿿㐀-䶿]/g, ' ').match(/[A-Za-z0-9]+/g) ?? []).length;
-  const minutes = Math.max(1, Math.round(cjk / 400 + latin / 200));
-  return { words: cjk + latin, minutes };
+  return countReading(body);
 }
 
 /* ------------------------------------------------------------------
@@ -126,9 +118,11 @@ export function readingStats(body: string | undefined): { words: number; minutes
 export async function gitLastModified(filePath: string | undefined): Promise<Date | null> {
   if (!filePath) return null;
   try {
-    const { execFileSync } = await import('node:child_process');
-    const out = execFileSync('git', ['log', '-1', '--format=%cI', '--', filePath], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-    return out ? new Date(out) : null;
+    const { execFile } = await import('node:child_process');
+    const { promisify } = await import('node:util');
+    const { stdout } = await promisify(execFile)('git', ['log', '-1', '--format=%cI', '--', filePath], { encoding: 'utf8', timeout: 5000 });
+    const value = stdout.trim();
+    return value ? new Date(value) : null;
   } catch {
     return null;
   }
@@ -137,23 +131,12 @@ export async function gitLastModified(filePath: string | undefined): Promise<Dat
 /* ------------------------------------------------------------------
    相关文章：标签重合度 + 同板块加权，排除自身
    ------------------------------------------------------------------ */
-export function relatedTo<T extends { collection: string; id: string; data: { tags: string[]; date: Date } }>(
+export function relatedTo<T extends { collection: string; id: string; data: { tags: string[]; date: Date; draft?: boolean } }>(
   current: T,
   pool: T[],
   limit = 3,
 ): T[] {
-  const mine = new Set(current.data.tags);
-  return pool
-    .filter((e) => !(e.collection === current.collection && e.id === current.id))
-    .map((e) => {
-      const shared = e.data.tags.filter((t) => mine.has(t)).length;
-      const same = e.collection === current.collection ? 0.5 : 0;
-      return { e, score: shared + same };
-    })
-    .filter(({ score }) => score > 0)
-    .sort((a, b) => b.score - a.score || byDateDesc(a.e, b.e))
-    .slice(0, limit)
-    .map(({ e }) => e);
+  return rankRelated(current, pool, limit);
 }
 
 /* ------------------------------------------------------------------

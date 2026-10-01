@@ -16,7 +16,7 @@
 | 评论数据与“在 GitHub 查看讨论” | `src/data/interactions.json` 的仓库、仓库 ID、分类、分类 ID | 与线上共享配置仓库的真实 Discussions |
 | 评论主题样式 | 本地使用配置的正式站点地址；公开 HTTPS 页面使用自身域名 | 使用已部署 CSS，本地改主题后需 HTTPS 预览部署验证 |
 | 后台写入仓库 | `CMS_REPOSITORY` → `GITHUB_REPOSITORY` → GitHub `origin` | 不是本地文件编辑器；登录后台并保存会写入指定 GitHub 仓库 |
-| 留言投递服务 | `src/config.ts` 的 `guestbook.web3formsKey` | 提交会调用该标识对应的真实 Web3Forms 服务 |
+| 留言投递服务 | `src/data/theme.json` 的 `guestbook.web3formsKey` | 提交会调用该标识对应的真实 Web3Forms 服务 |
 
 后台无法确定仓库时，会停止准备步骤并给出配置说明，不默认使用作者的个人仓库。评论仓库和后台仓库彼此独立：修改 `CMS_REPOSITORY` 不会迁移或重定向评论。
 

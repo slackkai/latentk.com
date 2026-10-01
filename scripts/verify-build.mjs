@@ -1,6 +1,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { resolve, join, relative, sep } from 'node:path';
 import { parse } from 'parse5';
+import { themeSchema, sectionKeys } from '../src/utils/theme.mjs';
 
 const root = resolve('dist');
 const base = (process.env.BASE_PATH || '/').replace(/\/$/, '');
@@ -53,7 +54,8 @@ for (const { pathname, links } of pages.values()) {
     }
   }
 }
-const cms = JSON.parse(await readFile(join(root, 'admin/config.yml'), 'utf8'));
+const theme = themeSchema.parse(JSON.parse(await readFile(new URL('../src/data/theme.json',import.meta.url),'utf8')));
+const cms = theme.features.cms ? JSON.parse(await readFile(join(root, 'admin/config.yml'), 'utf8')) : null;
 // The iframe fetches these styles separately, so HTML-link checks do not cover them.
 for (const palette of ['blue', 'classic', 'green', 'mono']) for (const mode of ['light', 'dark']) {
   const file = `giscus/${palette}-${mode}.css`;
@@ -68,18 +70,18 @@ for (const palette of ['blue', 'classic', 'green', 'mono']) for (const mode of [
     await stat(target).catch(() => errors.push(`${file}: missing font ${asset}`));
   }
 }
-if (!cms.backend.repo || cms.collections.length !== 6) errors.push('CMS configuration missing collections/repository');
-if (!cms.media_libraries?.default?.config?.transformations?.raster_image) errors.push('CMS upload optimization missing');
-for (const name of ['admin/index.html', 'admin/components.js', 'admin/previews.js', 'admin/preview.css', 'admin/vendor/wenkai/lxgwwenkaiscreen.css', 'admin/vendor/sveltia-cms.js', 'admin/vendor/katex.min.js']) {
+if (cms && (!cms.backend.repo || cms.collections.length !== 1 + sectionKeys.filter(key=>theme.sections[key].enabled).length)) errors.push('CMS configuration missing collections/repository');
+if (cms && !cms.media_libraries?.default?.config?.transformations?.raster_image) errors.push('CMS upload optimization missing');
+for (const name of cms ? ['admin/index.html', 'admin/components.js', 'admin/previews.js', 'admin/preview.css', 'admin/vendor/wenkai/lxgwwenkaiscreen.css', 'admin/vendor/sveltia-cms.js', 'admin/vendor/katex.min.js'] : []) {
   await stat(join(root, name)).catch(() => errors.push(`CMS asset missing: ${name}`));
 }
-await stat(join(root, 'pagefind/pagefind.js'));
+if(theme.features.search)await stat(join(root, 'pagefind/pagefind.js'));
 for (const name of ['rss.xml', 'sitemap-0.xml']) {
   const xml = await readFile(join(root, name), 'utf8');
   if (base && xml.includes(`${site.origin}/insight/`)) errors.push(`${name}: missing deployment base`);
 }
 const feed = await readFile(join(root, 'rss.xml'), 'utf8');
-if (!feed.includes('<content:encoded>')) errors.push('rss.xml: full-text content missing');
+if (feed.includes('<item>') && !feed.includes('<content:encoded>')) errors.push('rss.xml: full-text content missing');
 // Full-text bodies are entity-escaped; every internal href/src must already be absolute.
 if (/(?:href|src)=&quot;\/(?!\/)/.test(feed)) errors.push('rss.xml: relative URL inside full-text content');
 if (!(await readFile(join(root, 'about/index.html'), 'utf8')).includes('about-text')) errors.push('about page missing intro');

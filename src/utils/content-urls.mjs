@@ -27,8 +27,11 @@ export function contentDir(filePath) {
 export function resolveContentUrl(url, dir) {
   if (dir === undefined || !isRelativeUrl(url)) return url;
   const [, pathPart, suffix] = url.match(/^([^?#]*)(.*)$/);
-  const pathname = path.posix.normalize('/' + (dir ? dir + '/' : '') + pathPart)
-    .replace(/\/index\.mdx?$/, '/').replace(/\.mdx?$/, '/');
+  let pathname = path.posix.normalize('/' + (dir ? dir + '/' : '') + pathPart);
+  // Markdown inside attachments is a downloadable source, not a collection route.
+  if (!pathname.split('/').includes('attachments')) {
+    pathname = pathname.replace(/\/index\.mdx?$/, '/').replace(/\.mdx?$/, '/');
+  }
   return pathname + suffix;
 }
 

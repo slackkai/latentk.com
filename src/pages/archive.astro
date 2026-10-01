@@ -1,13 +1,14 @@
 ---
+import { t } from '../i18n';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Archive from '../components/Archive.astro';
 ---
 
-<BaseLayout title="Archive" description="全站归档，按年月排列">
+<BaseLayout title={t.archive.title} description={t.archive.desc}>
   <section class="container section">
-    <span class="postit reveal" style="--i:0">🗄️ 归档</span>
-    <h1 class="page-title reveal" style="--i:1">Archive</h1>
-    <p class="page-desc reveal" style="--i:2">全站内容按年月排列，一行一条。</p>
+    <span class="postit reveal" style="--i:0">{t.archive.badge}</span>
+    <h1 class="page-title reveal" style="--i:1">{t.archive.title}</h1>
+    <p class="page-desc reveal" style="--i:2">{t.archive.desc}</p>
     <div class="reveal" style="--i:3">
       <Archive />
     </div>

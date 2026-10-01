@@ -16,10 +16,10 @@ const highlights = about?.data.highlights.length
 const workbench = about?.data.workbench;
 ---
 
-<BaseLayout title="关于" description={`关于 ${SITE.title} 和它的作者`}>
+<BaseLayout title={t.about.pageTitle} description={t.about.pageDesc(SITE.title)}>
   <section class="container section">
-    <span class="postit reveal" style="--i:0">👋 你好</span>
-    <h1 class="page-title reveal" style="--i:1">About</h1>
+    <span class="postit reveal" style="--i:0">{t.about.badge}</span>
+    <h1 class="page-title reveal" style="--i:1">{t.about.title}</h1>
 
     <div class="about-grid">
       <div class="prose about-text reveal" style="--i:2">
@@ -28,13 +28,13 @@ const workbench = about?.data.workbench;
         <ul>
           {highlights.map((h) => <li><strong>{h.title}</strong>{h.desc && `：${h.desc}`}</li>)}
         </ul>
-        <h2>联系</h2>
+        <h2>{t.about.contact}</h2>
         <p>
           {SITE.github && <a href={withBase(SITE.github)} target="_blank" rel="noopener">GitHub</a>}
           {SITE.email && <span> · <a href={withBase(`mailto:${SITE.email}`)}>{SITE.email}</a></span>}
-          {config.features.guestbook && <span> · <a href={withBase('/guestbook/')}>给我留言</a></span>}
+          {config.features.guestbook && <span> · <a href={withBase('/guestbook/')}>{t.about.guestbookLink}</a></span>}
         </p>
-        <p class="meta">本站使用 <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 构建，托管在 GitHub Pages。</p>
+        <p class="meta">{t.about.builtWith}</p>
       </div>
 
       <aside class="hand-card about-card reveal taped" style="--i:3; --r:1deg">

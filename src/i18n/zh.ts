@@ -154,7 +154,7 @@ export const zh = {
     emailOptional: '（可选，方便我回信）',
     message: '想说的话',
     readyHint: '寄出后我会收到邮件。',
-    notConfigured: '留言尚未配置：站长需要在 src/config.ts 填入 Web3Forms key。',
+    notConfigured: '留言尚未配置：站长需要在 src/data/theme.json 填入 Web3Forms key。',
     send: '寄出 →',
     sending: '正在寄出…',
     sentStamp: '已寄出',
@@ -186,6 +186,11 @@ export const zh = {
   },
   /** Markdown 扩展语法里出现的文字（docs/SYNTAX.md） */
   md: {
+    viewer: {"zoomIn":"放大","zoomOut":"缩小","reset":"复位","fullscreen":"全屏","exitFullscreen":"退出全屏","fitViewport":"适应屏幕高度","restoreHeight":"恢复原来高度"},
+    readNote: "查看注释",
+    copyFailed: "复制失败",
+    zoom: "查看大图",
+    closeImage: "关闭图片",
     note: '展开批注',
     reveal: '显示被遮住的内容',
     fold: '展开',

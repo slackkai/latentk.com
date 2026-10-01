@@ -28,7 +28,7 @@ export default function remarkNotebook({ labels, footnotes = true } = {}) {
     if (definitions.size === 0) return;
     walk(tree, (node, index, parent) => {
       if (node.type !== 'footnoteReference' || !definitions.has(node.identifier)) return;
-      const children = definitions.get(node.identifier).children.flatMap((block, i) => {
+      const children = JSON.parse(JSON.stringify(definitions.get(node.identifier).children)).flatMap((block, i) => {
         const inline = block.type === 'paragraph' ? block.children : [{ type: 'text', value: toText(block) }];
         return i === 0 ? inline : [el('br'), ...inline];
       });

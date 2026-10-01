@@ -1,0 +1,181 @@
+---
+import { withBase } from '../utils/url';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LibraryCard from '../components/LibraryCard.astro';
+import { SECTIONS, config } from '../config';
+import { t } from '../i18n';
+import { getPosts } from '../utils/content';
+
+const items = await getPosts('library');
+const sec = SECTIONS.library;
+const page = Number(Astro.props.page || 1);
+const size = config.library.pageSize;
+const pages = Math.max(1,Math.ceil(items.length / size));
+const visibleItems = items.slice((page-1)*size,page*size);
+const pageHref = (n:number) => withBase(n===1?'/library/':'/library/page/'+n+'/');
+const labels = JSON.stringify({types:t.library.types,typeEmoji:t.library.typeEmoji,status:t.library.status});
+
+const TYPE_LABEL = t.library.types;
+const STATUS_ORDER: Record<string, number> = { reading: 0, todo: 1, done: 2 };
+const types = [...new Set(items.map((i) => i.data.type))];
+---
+
+<BaseLayout title={sec.label} description={sec.desc}>
+  <section class="container section" data-library-root data-page-size={size} data-catalog={withBase('/catalog/library.json')} data-labels={labels} data-error={t.search.unavailable}>
+    <span class="postit reveal" style="--i:0">{sec.emoji} {sec.subtitle}</span>
+    <h1 class="page-title reveal" style="--i:1">{sec.label}</h1>
+    <p class="page-desc reveal" style="--i:2">{sec.desc}</p>
+
+    <div class="toolbar reveal" style="--i:3">
+      {
+        types.length > 1 && (
+          <div class="filters" role="group" aria-label={t.common.filterByType}>
+            <button class="hand-btn small is-on" data-type="all" aria-pressed="true" aria-controls="lib-grid">
+              {t.common.all}
+            </button>
+            {types.map((t) => (
+              <button class="hand-btn small" data-type={t} aria-pressed="false" aria-controls="lib-grid">
+                {TYPE_LABEL[t] ?? t}
+              </button>
+            ))}
+          </div>
+        )
+      }
+      <input id="lib-search" class="search" type="search" placeholder={t.library.searchPlaceholder} aria-label={t.library.searchLabel} />
+    </div>
+    <div class="toolbar reveal" style="--i:4">
+      <div class="sorts" role="group" aria-label={t.common.sort}>
+        <span class="meta">{t.common.sort}</span>
+        <button class="hand-btn small is-on" data-sort="date" aria-pressed="true" aria-controls="lib-grid">{t.library.sortDate}</button>
+        <button class="hand-btn small" data-sort="rating" aria-pressed="false" aria-controls="lib-grid">{t.library.sortRating}</button>
+        <button class="hand-btn small" data-sort="status" aria-pressed="false" aria-controls="lib-grid">{t.library.sortStatus}</button>
+      </div>
+      <button class="hand-btn small" id="lib-random">{t.library.random}</button>
+    </div>
+
+    <div class="grid" id="lib-grid">
+      {
+        visibleItems.map((it, i) => (
+          <div
+            data-type={it.data.type}
+            data-date={it.data.date.valueOf()}
+            data-rating={it.data.rating ?? 0}
+            data-status={STATUS_ORDER[it.data.status ?? ''] ?? 3}
+            data-search={[it.data.title, it.data.author, it.data.summary, ...it.data.tags].filter(Boolean).join(' ').toLowerCase()}
+          >
+            <LibraryCard
+              href={withBase(`/library/${it.id}/`)}
+              title={it.data.title}
+              type={it.data.type}
+              url={it.data.url}
+              author={it.data.author}
+              rating={it.data.rating}
+              status={it.data.status}
+              summary={it.data.summary}
+              cover={it.data.cover}
+              tags={it.data.tags}
+              rotate={i % 3 === 0 ? -0.5 : i % 3 === 1 ? 0.4 : -0.2}
+              index={5 + i}
+              transitionName={`library-${it.id}`}
+            />
+          </div>
+        ))
+      }
+    </div>
+    <template id="lib-card-template"><LibraryCard template href="#" title="" type="other" cover="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E" author="placeholder" summary="placeholder" rating={5} status="done" tags={['placeholder']} url="#" /></template>
+    <nav class="pagination" data-library-pagination aria-label={t.common.prevNext} hidden={pages===1}>
+      <a class="hand-btn small" data-page-prev href={pageHref(Math.max(1,page-1))} hidden={page===1}>{t.common.prev}</a>
+      <span class="meta" data-page-status role="status" aria-live="polite">{page} / {pages}</span>
+      <a class="hand-btn small" data-page-next href={pageHref(Math.min(pages,page+1))} hidden={page===pages}>{t.common.next}</a>
+    </nav>
+    <p class="muted empty" id="lib-empty" hidden>{t.common.noMatch}</p>
+    {items.length === 0 && <p class="muted">{t.home.emptyLibrary}</p>}
+  </section>
+</BaseLayout>
+
+<style>
+  .pagination { display:flex; align-items:center; justify-content:center; gap:1rem; margin-top:1.5rem; }
+  [hidden] { display:none !important; }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 1.25rem 0 0;
+  }
+  .filters,
+  .sorts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .hand-btn.is-on {
+    background: var(--postit);
+  }
+  .search {
+    font: inherit;
+    font-size: 1rem;
+    padding: 0.35rem 0.9rem;
+    border: 2px solid var(--pencil);
+    border-radius: var(--radius-wobble-sm);
+    background: var(--paper-2);
+    color: var(--pencil);
+    box-shadow: var(--shadow-hand-sm);
+    min-width: 14rem;
+    transition: all 0.12s ease;
+  }
+  .search:focus {
+    outline: none;
+    background: var(--postit);
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-hand);
+  }
+  .grid {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .empty {
+    margin-top: 1.5rem;
+  }
+  :global(.is-picked) {
+    animation: pick 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  :global(.is-picked > .hand-card) {
+    box-shadow: var(--shadow-hand) !important;
+    background: var(--postit) !important;
+  }
+  @keyframes pick {
+    0% {
+      transform: rotate(0) scale(1);
+    }
+    30% {
+      transform: rotate(-3deg) scale(1.05);
+    }
+    60% {
+      transform: rotate(2deg) scale(1.04);
+    }
+    100% {
+      transform: rotate(0) scale(1);
+    }
+  }
+</style>
+
+<script>
+import { mountLibrary } from '../scripts/library.mjs';
+let dispose: (()=>void)|undefined;
+function init(){dispose?.();const root=document.querySelector<HTMLElement>('[data-library-root]');dispose=root?mountLibrary(root,window):undefined;}
+init();document.addEventListener('astro:page-load',init);document.addEventListener('astro:before-swap',()=>dispose?.());
+</script>

@@ -810,3 +810,73 @@ html[data-theme='dark'] .stamp {
 .prose th {
   background: var(--postit);
 }
+
+/* Composable notebook objects and reviewed pointer feedback. */
+.prose { overflow-wrap: anywhere; display: flow-root; }
+.prose :where(.sticky, .fold, .fold-body, .layout, .layout > *, .photos, .photo) { min-width: 0; }
+.prose :where(.sticky, .fold-body, .photo, .note, .note-block, .layout-cols > *, blockquote) .note,
+.prose :where(.sticky, .fold-body, .photo, .note, .note-block, .layout-cols > *, blockquote) .note-block {
+  float: none; clear: none; position: static; width: auto; max-width: 100%;
+  margin: 0.65rem 0; transform: none; box-shadow: none;
+  padding: 0.55rem 0.75rem; border: 1.5px dashed var(--pencil-25); background: var(--paper-2);
+  color: var(--pencil);
+}
+.prose :where(.sticky, .fold-body, .photo, .note, .note-block, .layout-cols > *, blockquote) .note::before { content: none; }
+.prose .note-ref { position: relative; min-width: 1.5em; text-align: center; }
+.prose :where(.note-toggle, .pen-toggle) { width: 1px; height: 1px; }
+.prose .note-ref::after { content: none; }
+.prose .note-ref:empty::after { content: counter(note); }
+.prose .note[data-note-active] { outline: 2px solid var(--marker); outline-offset: 3px; animation: note-nudge 460ms ease-out; }
+.prose .note-ref[data-note-active] { background: var(--postit); }
+@keyframes note-nudge {
+  0%, 100% { rotate: 0deg; }
+  20% { rotate: -1.6deg; }
+  45% { rotate: 1.3deg; }
+  70% { rotate: -0.7deg; }
+}
+@media (pointer: coarse) {
+  .prose .note-ref::before { content:''; position:absolute; width:2.75rem; height:2.75rem; top:50%; left:50%; transform:translate(-50%,-50%); }
+}
+.prose .note-toggle:focus-visible + .note-ref { outline: 2px solid var(--marker); outline-offset: 3px; }
+.prose .note-toggle:checked + .note-ref { background: var(--postit); }
+.prose :where(a, button, summary):focus-visible { outline: 2px solid var(--marker); outline-offset: 4px; border-radius: 3px; }
+.prose .photos-text { grid-column: 1 / -1; margin: 0; text-align: left; }
+.prose .photos-text > :first-child { margin-top: 0; }
+.prose .photos-text > :last-child { margin-bottom: 0; }
+.prose .photo figcaption { color: var(--pencil); line-height: 1.75; overflow-wrap: anywhere; }
+.prose .photo > a { display: block; }
+.prose .photo > a:focus-visible { outline-offset: 5px; }
+.prose .photo :where(.mark, .stamp) { font-size: inherit; }
+.prose .stamp { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.prose :where(.sticky, .fold-body, .layout-cols) > .photos { margin: 1.6rem 0; }
+.prose :where(.sticky, .fold-body) > .photos-single { grid-template-columns: minmax(0, 24rem); }
+.prose :where(.sticky, .fold-body) .photo { transform: none; }
+.prose :where(.sticky, .fold-body) .sticky { transform: none; margin: 1.4rem 0 0.5rem; box-shadow: none; }
+.prose :where(.sticky, .fold-body) .sticky::before { display: none; }
+.prose .sticky p + p { margin-top: 0.65em; }
+.prose .sticky :where(ul, ol) { padding-left: 1.5rem; }
+.prose .sticky :where(pre, table, .photos, .fold) { margin-top: 1rem; }
+.prose .sticky pre { padding: 1.6rem 0.8rem 0.8rem; }
+.prose :where(h2, h3, .sticky-title, .fold-summary) { overflow-wrap: anywhere; }
+.prose :where(h2, h3) .stamp { font-size: 0.6em; }
+.prose .layout-cols { margin-block: 1.75rem; gap: 1.5rem; }
+.prose .layout-cols > .sticky { margin: 0; }
+.prose .fold-body > .layout-cols { margin-top: 1rem; }
+@media (hover: hover) and (pointer: fine) {
+  .prose .note-ref:hover { background: var(--postit); }
+  .prose a:hover { text-decoration-thickness: 2px; }
+}
+@media (max-width: 640px) {
+  .prose .note-ref::before { content: ''; position: absolute; width: 2.75rem; height: 2.75rem; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .prose .sticky { margin-inline: 0; transform: none; padding-inline: 0.85rem; }
+  .prose .photo { transform: none; }
+  .prose .photos { margin-inline: 0; gap: 1.6rem; }
+  .prose .fold-body { padding-inline: 0.75rem; }
+  .prose .stamp { transform: none; }
+  .prose .code-copy-lang { opacity: 0; }
+  .prose .code-copy:not([data-state]) .code-copy-copy { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prose *, .prose *::before, .prose *::after { animation: none !important; transition: none !important; }
+  .prose :where(.note, .note-block, .photo):hover { transform: none; }
+}

@@ -1,3 +1,4 @@
+const registerEditor = value => CMS.registerEditorComponent(globalThis.NotebookMarkdown?.localizeEditor?.(value) || value);
 /* global CMS, katex */
 // Editor components for the notebook Markdown syntax (docs/SYNTAX.md). Every family in
 // src/markdown/directives.mjs has a component here; tests/markdown.test.mjs checks the ids.
@@ -31,7 +32,7 @@ const wrap = (open, content, close) => `${open}\n\n${String(content ?? '')}\n\n$
 const KIND_LABELS = { tip: '💡 提示', warn: '⚠️ 注意', info: '📌 说明', question: '❓ 疑问' };
 
 /* ---------- inline: toolbar buttons ---------- */
-CMS.registerEditorComponent({
+registerEditor({
   id: 'note',
   label: '页边批注',
   icon: 'sticky_note_2',
@@ -44,7 +45,7 @@ CMS.registerEditorComponent({
   toPreview: ({ text = '' }) => `<label class="note-wrap"><span class="note-ref"></span><span class="note">${text}</span></label>`,
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'mark',
   label: '荧光笔',
   icon: 'ink_highlighter',
@@ -60,7 +61,7 @@ CMS.registerEditorComponent({
   toPreview: ({ text = '', color }) => `<span class="mark${color ? ` mark-${color}` : ''}">${text}</span>`,
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'pen',
   label: '红笔',
   icon: 'draw',
@@ -81,7 +82,7 @@ CMS.registerEditorComponent({
     : `<span class="pen pen-${kind}">${text}</span>`),
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'stamp',
   label: '印章',
   icon: 'approval',
@@ -98,7 +99,7 @@ CMS.registerEditorComponent({
 });
 
 /* ---------- blocks: Insert menu ---------- */
-CMS.registerEditorComponent({
+registerEditor({
   id: 'postit',
   label: '便利贴',
   icon: 'sticky_note_2',
@@ -118,7 +119,7 @@ CMS.registerEditorComponent({
     body, '</aside>'),
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'note-block',
   label: '页边批注（多段）',
   icon: 'edit_note',
@@ -130,7 +131,7 @@ CMS.registerEditorComponent({
   toPreview: ({ title, body }) => wrap(`<aside class="note-block">${title ? `<p class="note-block-title">${escapeHtml(title)}</p>` : ''}`, body, '</aside>'),
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'photos',
   label: '相片',
   icon: 'photo_library',
@@ -155,7 +156,7 @@ CMS.registerEditorComponent({
     `<figure class="photo"><img src="${escapeHtml(p.image)}" alt="">${p.caption ? `<figcaption>${escapeHtml(p.caption)}</figcaption>` : ''}</figure>`).join('')}</div>`,
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'fold',
   label: '折页',
   icon: 'unfold_more',
@@ -168,7 +169,7 @@ CMS.registerEditorComponent({
   toPreview: ({ title, open, body }) => wrap(`<details class="fold"${open ? ' open' : ''}><summary class="fold-summary">${escapeHtml(title || '展开')}</summary><div class="fold-body">`, body, '</div></details>'),
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'steps',
   label: '步骤 / 时间线',
   icon: 'format_list_numbered',
@@ -184,7 +185,7 @@ CMS.registerEditorComponent({
   toPreview: ({ timeline, body }) => wrap(`<div class="steps${timeline ? ' steps-timeline' : ''}">`, body, '</div>'),
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'layout',
   label: '版式：加宽 / 分栏',
   icon: 'view_column',
@@ -204,7 +205,7 @@ CMS.registerEditorComponent({
   toPreview: ({ mode, cols, body }) => wrap(`<div class="layout ${mode === 'cols' ? 'layout-cols' : 'layout-wide'}" style="--cols:${cols || 2}">`, body, '</div>'),
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'video',
   label: '视频',
   icon: 'smart_display',
@@ -229,7 +230,7 @@ CMS.registerEditorComponent({
     `<figure class="media-frame"><div class="media-facade" style="aspect-ratio:16/9">${poster ? `<img src="${escapeHtml(poster)}" alt="">` : ''}<span class="media-play">▶ ${source === 'file' ? escapeHtml(file || '视频') : `${source} · ${escapeHtml(id || '')}`}</span></div>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}</figure>`,
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'embed',
   label: '嵌入 HTML',
   icon: 'code_blocks',
@@ -251,7 +252,7 @@ CMS.registerEditorComponent({
     `<figure class="media-frame"><div class="media-facade" style="aspect-ratio:16/6"><span class="media-play">${kind === 'snippet' ? '片段' : '嵌入页面'} · ${escapeHtml(path || '')}</span></div>${caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : ''}</figure>`,
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'bookmark',
   label: '链接卡片',
   icon: 'bookmark',
@@ -273,7 +274,7 @@ CMS.registerEditorComponent({
     `<a class="bookmark hand-card" href="${escapeHtml(url)}">${image ? `<img class="bookmark-image" src="${escapeHtml(image)}" alt="">` : ''}<span class="bookmark-title">${escapeHtml(title || url)}</span>${desc ? `<span class="bookmark-desc">${escapeHtml(desc)}</span>` : ''}<span class="bookmark-host">${escapeHtml(url)}</span></a>`,
 });
 
-CMS.registerEditorComponent({
+registerEditor({
   id: 'math-block',
   label: '公式（独立一行）',
   icon: 'function',

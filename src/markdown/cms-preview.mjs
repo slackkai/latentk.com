@@ -14,6 +14,7 @@ import remarkMath from 'remark-math';
 import remarkDirective from 'remark-directive';
 import remarkRehype from 'remark-rehype';
 import rehypeKatex from 'rehype-katex';
+import rehypeNotes from './rehype-notes.mjs';
 import rehypeRaw from 'rehype-raw';
 import rehypeStringify from 'rehype-stringify';
 import DOMPurify from 'dompurify';
@@ -21,6 +22,12 @@ import remarkNotebook from './remark-notebook.mjs';
 import remarkDirectives from './remark-directives.mjs';
 import { el, text, walk } from './directives.mjs';
 import { t } from '../i18n';
+import { config } from '../config';
+import { localizeCms } from '../i18n/cms.mjs';
+export const localizeEditor = value => localizeCms(value,config.lang);
+export const previewLabels = {sections:Object.fromEntries(Object.entries(config.sections).map(([key,value])=>[key,value.label])),labels:{...t.projects.status,...t.library.types,...t.library.status,...t.academic.kinds},ui:{untitled:t.home.untitled,updated:t.common.updated,draft:config.lang==='zh'?'草稿':'Draft',commentsOff:config.lang==='zh'?'评论关闭':'Comments off',reviewed:config.lang==='zh'?'资源核验':'Reviewed',empty:config.lang==='zh'?'正文尚未填写，在左侧开始写作即可实时预览。':'Start writing on the left to preview your content.',links:config.lang==='zh'?'相关链接':'Related links',done:t.library.status.done}};
+import { mountNotes } from '../scripts/notes.mjs';
+export function enhance(root) { return root ? mountNotes(root, root.ownerDocument.defaultView, {read:t.md.readNote,expand:t.md.note}) : () => {}; }
 
 export async function highlight(root) {
   if (!root?.querySelector('pre > code')) return;
@@ -47,6 +54,7 @@ const processor = unified()
   .use(remarkDirectives, { labels: t.md, warn: () => {} })
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeKatex)
+  .use(rehypeNotes)
   .use(rehypeRaw)
   .use(rehypeStringify);
 

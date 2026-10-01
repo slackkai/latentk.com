@@ -53,12 +53,14 @@ npm run new -- insight my-first-post "文章标题"
 
 从旧的平铺布局（`insight/<slug>.md` 加 `public/uploads/`）迁移时运行 `node scripts/migrate-bundles.mjs`，先加 `--dry-run` 看计划。只有需要自定义 Astro 组件的 `.mdx` 文件才继续用代码编辑器维护。
 
+主题从零开始的配置、发布与维护流程见 [THEME.md](docs/THEME.md)。
+
 ## 配置位置
 
 | 配置 | 文件 |
 | --- | --- |
 | 站名、作者、域名、联系方式、页脚结束语 | `src/data/site.json` |
-| 研究方向、首页、功能开关、配色 | `src/config.ts` |
+| 研究方向、首页、板块、功能开关、语言与配色 | `src/data/theme.json` |
 | 导航自动隐藏、giscus 评论开关与仓库配置 | 后台“站点设置 → 导航与评论”，或 `src/data/interactions.json`；见 [评论配置](docs/COMMENTS.md) |
 | 五个板块正文与附件 | `src/content/`（每篇一个文件夹，附件在旁边的 `attachments/`） |
 | 最近在做 / 在读 / 在听 | `src/content/now/now.md` |
@@ -88,3 +90,16 @@ npm run preview
 `src/data/site.json` 中已经设置 `https://latentk.com`，用于本地／独立构建。DNS 接通前，线上 Pages 工作流仍使用可访问的 GitHub Pages 地址。域名接入步骤和 DNS 记录见 [DOMAIN.md](docs/DOMAIN.md)。
 
 主题继承的修复记录见 [REVIEW.md](docs/REVIEW.md)，主题首发记录见 [RELEASE-1.0.0.md](docs/RELEASE-1.0.0.md)。
+## 内容与阅读架构
+
+长文页面的职责分为三层：`src/utils/content.ts` 读取与过滤内容，`src/utils/articles.ts` 提供学术、洞见、资料库共用的路由和阅读上下文，`PostLayout.astro` 组织正文、目录和导航。项目保留独立的父子文档结构。
+
+`src/utils/editorial.mjs` 保存可独立测试的阅读估算和推荐规则。推荐至少需要一个共享标签，排除自身与草稿；不再因为同属一个栏目就推荐无关文章。Git 修改时间使用有超时的异步子进程，关闭元信息时不读取历史。
+
+首页沿用栏目入口与最近更新。教程的适用条件与学习目标直接写在 Markdown 正文中，使用现有的笔记本语法。资料库可用 `reviewed` 记录来源核验；schema、CMS 字段和后台预览共同支持该日期，空字段继续沿用既有规范化规则。
+
+正文嵌入的 ResizeObserver 与 load 监听在 Astro 切页前释放，避免反复阅读交互文章时积累观察器。编辑标准和原稿保留方式见 [内容编辑](docs/CONTENT-EDITING.md)。
+
+## 主题配置与组合
+
+主题的设置入口、三种起始配置和发布维护流程见 [THEME.md](docs/THEME.md)。组合示例已成为 `/projects/syntax-combinations/` 的普通 Markdown 内容；正式渲染与后台预览共用规则。边注点击只使用短暂线框和轻晃，不增加状态文字。

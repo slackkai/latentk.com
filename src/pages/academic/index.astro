@@ -1,4 +1,5 @@
 ---
+import { t } from '../../i18n';
 import { withBase } from '../../utils/url';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
@@ -11,12 +12,7 @@ const papers = all.filter((p) => p.data.kind === 'paper');
 const posts = all.filter((p) => p.data.kind !== 'paper');
 const sec = SECTIONS.academic;
 
-const KIND_LABEL: Record<string, string> = {
-  note: '笔记',
-  talk: '报告',
-  course: '课程',
-  project: '项目',
-};
+const KIND_LABEL = t.academic.kinds;
 const kinds = [...new Set(posts.map((p) => p.data.kind))];
 ---
 
@@ -44,12 +40,12 @@ const kinds = [...new Set(posts.map((p) => p.data.kind))];
 
     <!-- 笔记与其他 -->
     <div class="notes-head reveal" style="--i:7">
-      <h2>Notes <span class="muted-zh">笔记与其他</span></h2>
+      <h2>{t.academic.notes} {t.academic.notesSub && <span class="muted-zh">{t.academic.notesSub}</span>}</h2>
       {
         kinds.length > 1 && (
-          <div class="filters" role="group" aria-label="按类型筛选">
+          <div class="filters" role="group" aria-label={t.common.filterByType}>
             <button class="hand-btn small is-on" data-kind="all">
-              全部
+              {t.common.all}
             </button>
             {kinds.map((k) => (
               <button class="hand-btn small" data-kind={k}>
@@ -80,7 +76,7 @@ const kinds = [...new Set(posts.map((p) => p.data.kind))];
         ))
       }
     </div>
-    {posts.length === 0 && <p class="muted">还没有笔记。</p>}
+    {posts.length === 0 && <p class="muted">{t.academic.noNotes}</p>}
   </section>
 </BaseLayout>
 

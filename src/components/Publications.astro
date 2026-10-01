@@ -1,4 +1,5 @@
 ---
+import { t } from '../i18n';
 import { withBase } from '../utils/url';
 /**
  * Publications：kind: paper 的条目按年份分组，带 venue 徽章与链接。
@@ -49,7 +50,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
       </div>
     ))
   }
-  {years.length === 0 && <p class="muted">还没有 kind: paper 的条目。</p>}
+  {years.length === 0 && <p class="muted">{t.academic.noPapers}</p>}
 </div>
 
 <style>

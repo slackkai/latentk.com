@@ -3,10 +3,11 @@ import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeNotes, { notePrefix } from '../src/markdown/rehype-notes.mjs';
 import remarkDirective from 'remark-directive';
 import remarkAttachments from '../src/markdown/remark-attachments.mjs';
 import remarkNotebook from '../src/markdown/remark-notebook.mjs';
@@ -16,7 +17,7 @@ import { directives } from '../src/markdown/directives.mjs';
 const warnings = [];
 const processor = await createMarkdownProcessor({
   remarkPlugins: [remarkMath, remarkDirective, remarkAttachments, remarkNotebook, [remarkDirectives, { warn: message => warnings.push(message) }]],
-  rehypePlugins: [rehypeKatex],
+  rehypePlugins: [rehypeKatex, rehypeNotes],
   syntaxHighlight: false,
 });
 // A pretend content file: relative URLs resolve against its folder exactly as in the site.
@@ -31,7 +32,8 @@ const render = async (markdown, fileURL = entryFile) => (await processor.render(
 const block = (name, body, head = '') => `:::${name}${head}\n${body}\n:::\n`;
 
 // The exact markup produced by src/components/mdx/Note.astro and Mark.astro.
-const note = inner => `<label class="note-wrap"><input type="checkbox" class="note-toggle" aria-label="展开批注"><span class="note-ref"></span><span class="note">${inner}</span></label>`;
+const prefix = notePrefix(fileURLToPath(entryFile));
+const note = inner => `<span class="note-wrap"><input type="checkbox" class="note-toggle" aria-label="展开批注 1" id="${prefix}-1" aria-controls="${prefix}-1-body"><label class="note-ref" for="${prefix}-1">1</label><span class="note" id="${prefix}-1-body">${inner}</span></span>`;
 const mark = inner => `<span class="mark">${inner}</span>`;
 
 test(':note[] and :mark[] render exactly like the MDX components', async () => {
@@ -40,9 +42,9 @@ test(':note[] and :mark[] render exactly like the MDX components', async () => {
 
 test('notes keep inline Markdown, links, math and nested highlights', async () => {
   const html = await render('见 :note[**加粗** [链接](https://example.com/a_b) 与 :mark[高亮]，以及 $d_k$。]');
-  const opening = note('').replace('</span></label>', '');
+  const opening = note('').replace('</span></span>', '');
   assert.ok(html.startsWith(`<p>见 ${opening}<strong>加粗</strong> <a href="https://example.com/a_b">链接</a> 与 ${mark('高亮')}，以及 <span class="katex">`), html);
-  assert.ok(html.endsWith('。</span></label></p>'), html);
+  assert.ok(html.endsWith('。</span></span></p>'), html);
   assert.equal((html.match(/class="note-wrap"/g) ?? []).length, 1);
 });
 

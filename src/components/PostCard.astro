@@ -45,6 +45,7 @@ const { href, title, date, description, tags = [], badge, rotate = 0, index = 0,
     gap: 0.4rem;
     padding: 1rem 1.25rem;
     transform: rotate(var(--r));
+    min-width: 0;
   }
   .post-card.is-link:hover {
     transform: rotate(calc(var(--r) - 0.6deg)) translate(-1px, -1px);
@@ -65,6 +66,8 @@ const { href, title, date, description, tags = [], badge, rotate = 0, index = 0,
   }
   .post-card-title {
     font-size: 1.35rem;
+    line-height: 1.45;
+    text-wrap: pretty;
   }
   .post-card-title a {
     transition: color 0.15s ease;

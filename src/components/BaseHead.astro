@@ -8,9 +8,10 @@ interface Props {
   image?: string;
   type?: 'website' | 'article';
   publishedTime?: Date;
+  modifiedTime?: Date;
 }
 
-const { title, description = SITE.description, image, type = 'website', publishedTime } = Astro.props;
+const { title, description = SITE.description, image, type = 'website', publishedTime, modifiedTime } = Astro.props;
 
 const fullTitle = title ? `${title} · ${SITE.title}` : `${SITE.title} — ${SITE.tagline}`;
 const canonical = new URL(Astro.url.pathname.replace(/\/404\/$/, '/404.html'), Astro.site);
@@ -42,6 +43,7 @@ const FONTS = [latinChunk];
 <meta property="og:site_name" content={SITE.title} />
 {ogImage && <meta property="og:image" content={ogImage} />}
 {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime.toISOString()} />}
 <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />

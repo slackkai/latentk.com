@@ -7,6 +7,7 @@ import SectionCard from '../components/SectionCard.astro';
 import PostCard from '../components/PostCard.astro';
 import LibraryCard from '../components/LibraryCard.astro';
 import { SECTIONS, ENABLED_SECTIONS, config } from '../config';
+import { t } from '../i18n';
 import { getPosts, formatDate, isProjectDoc } from '../utils/content';
 
 const [academic, insight, dailies, library, projects] = await Promise.all([
@@ -36,19 +37,19 @@ const rot = (i: number) => (i % 2 === 0 ? -0.5 : 0.5);
   <Hero />
 
   <!-- 五个板块入口 -->
-  <section class="container sections-grid">
-    {ENABLED_SECTIONS.map((section, i) => <SectionCard {...section} count={counts[section.key]} unit={section.key === "dailies" ? "条" : section.key === "library" ? "项" : section.key === "projects" ? "个" : "篇"} index={4 + i} />)}
-  </section>
+  {ENABLED_SECTIONS.length > 1 && <section class="container sections-grid">
+    {ENABLED_SECTIONS.map((section, i) => <SectionCard {...section} count={counts[section.key]} unit={section.key === "dailies" ? t.common.units.entry : section.key === "library" ? t.common.units.item : section.key === "projects" ? t.common.units.project : t.common.units.post} index={4 + i} />)}
+  </section>}
 
   <!-- Now 卡片 + 最新洞见 -->
-  <section class="container section">
-    <div class="two-col now-row">
-      <div class="now-col">
-        {config.features.nowCard && <NowCard index={8} />}
-      </div>
+  {(config.features.nowCard || config.sections.insight.enabled) && <section class="container section">
+    <div class:list={['two-col','now-row',{'has-now':config.features.nowCard}]}>
+      {config.features.nowCard && <div class="now-col">
+        <NowCard index={8} />
+      </div>}
 
       {config.sections.insight.enabled && <div class="panel reveal" style="--r:0.4deg; --i:9">
-        <span class="panel-label">最新洞见</span>
+        <span class="panel-label">{t.home.latest(SECTIONS.insight.label)}</span>
         <div class="stack">
           {latestInsight.map((p, i) => (
             <PostCard
@@ -61,18 +62,18 @@ const rot = (i: number) => (i % 2 === 0 ? -0.5 : 0.5);
               transitionName={`insight-${p.id}`}
             />
           ))}
-          {latestInsight.length === 0 && <p class="muted">还没有内容，去 src/content/insight 写第一篇吧。</p>}
+          {latestInsight.length === 0 && <p class="muted">{t.common.empty}</p>}
         </div>
-        <a href={withBase(SECTIONS.insight.href)} class="hand-btn more">全部洞见 →</a>
+        <a href={withBase(SECTIONS.insight.href)} class="hand-btn more">{t.home.allOf(SECTIONS.insight.label)}</a>
       </div>}
     </div>
-  </section>
+  </section>}
 
   <!-- 最新学术 + 日常快照 -->
-  <section class="container section">
+  {(config.sections.academic.enabled || config.sections.dailies.enabled) && <section class="container section">
     <div class="two-col">
       {config.sections.academic.enabled && <div class="panel reveal" style="--r:-0.4deg; --i:12">
-        <span class="panel-label">最新学术</span>
+        <span class="panel-label">{t.home.latest(SECTIONS.academic.label)}</span>
         <div class="stack">
           {latestAcademic.map((p, i) => (
             <PostCard
@@ -80,42 +81,42 @@ const rot = (i: number) => (i % 2 === 0 ? -0.5 : 0.5);
               title={p.data.title}
               date={p.data.date}
               description={p.data.description ?? p.data.venue}
-              badge={p.data.kind}
+              badge={t.academic.kinds[p.data.kind]}
               rotate={rot(i + 1)}
               index={13 + i}
               transitionName={`academic-${p.id}`}
             />
           ))}
-          {latestAcademic.length === 0 && <p class="muted">还没有内容，去 src/content/academic 写第一篇吧。</p>}
+          {latestAcademic.length === 0 && <p class="muted">{t.common.empty}</p>}
         </div>
-        <a href={withBase(SECTIONS.academic.href)} class="hand-btn more">全部学术 →</a>
+        <a href={withBase(SECTIONS.academic.href)} class="hand-btn more">{t.home.allOf(SECTIONS.academic.label)}</a>
       </div>}
 
       {config.sections.dailies.enabled && <div class="panel reveal" style="--r:0.3deg; --i:13">
-        <span class="panel-label">日常快照</span>
+        <span class="panel-label">{t.home.dailyPanel}</span>
         <ul class="daily-list">
           {latestDailies.map((d) => (
             <li>
               <a href={withBase(`/dailies/${d.id}/`)} class="daily-row">
                 <time class="meta">{formatDate(d.data.date, 'short')}</time>
                 <span class="daily-row-title" transition:name={d.data.title ? `dailies-${d.id}` : undefined}>
-                  {d.data.title ?? d.data.description ?? '（无题）'}
+                  {d.data.title ?? d.data.description ?? t.home.untitled}
                 </span>
                 {d.data.mood && <span class="meta">{d.data.mood}</span>}
               </a>
             </li>
           ))}
-          {latestDailies.length === 0 && <li class="muted">还没有日常记录。</li>}
+          {latestDailies.length === 0 && <li class="muted">{t.home.noDailies}</li>}
         </ul>
-        <a href={withBase(SECTIONS.dailies.href)} class="hand-btn more">全部日常 →</a>
+        <a href={withBase(SECTIONS.dailies.href)} class="hand-btn more">{t.home.allOf(SECTIONS.dailies.label)}</a>
       </div>}
     </div>
-  </section>
+  </section>}
 
   <!-- 资料库上新 -->
-  <section class="container section">
+  {config.sections.library.enabled && <section class="container section">
     {config.sections.library.enabled && <div class="panel reveal" style="--r:-0.25deg; --i:15">
-      <span class="panel-label">资料库上新</span>
+      <span class="panel-label">{t.home.libraryPanel}</span>
       <div class="lib-grid">
         {latestLibrary.map((l, i) => (
           <LibraryCard
@@ -132,11 +133,11 @@ const rot = (i: number) => (i % 2 === 0 ? -0.5 : 0.5);
             transitionName={`library-${l.id}`}
           />
         ))}
-        {latestLibrary.length === 0 && <p class="muted">资料库还是空的。</p>}
+        {latestLibrary.length === 0 && <p class="muted">{t.home.emptyLibrary}</p>}
       </div>
-      <a href={withBase(SECTIONS.library.href)} class="hand-btn more">进入资料库 →</a>
+      <a href={withBase(SECTIONS.library.href)} class="hand-btn more">{t.home.enterLibrary}</a>
     </div>}
-  </section>
+  </section>}
 </BaseLayout>
 
 <style>
@@ -152,10 +153,12 @@ const rot = (i: number) => (i % 2 === 0 ? -0.5 : 0.5);
   }
   @media (min-width: 1024px) {
     .sections-grid {
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
       gap: 1.1rem;
     }
   }
+  .two-col:not(:has(> :nth-child(2))) { grid-template-columns:1fr; }
+  .now-row:not(.has-now) { grid-template-columns:1fr; }
   .two-col {
     display: grid;
     gap: 2.5rem;

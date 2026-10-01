@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>同一拍里的两个位置</title>
+  <link rel="stylesheet" href="../../../../uploads/reading-labs/lab.css">
+  <link rel="stylesheet" href="./reader.css">
+</head>
+<body>
+  <main class="time-reader" aria-label="反馈延迟的逐拍对照">
+    <header><span class="eyebrow">逐拍放大镜</span><h1>车已经到了，消息还在路上。</h1><p>两条轨道都表示位置。空心点是收到的测量，实心点是实际位置。</p></header>
+    <div class="choices" role="group" aria-label="消息延迟预设">
+      <button type="button" data-delay="0" aria-pressed="false">消息及时</button>
+      <button type="button" data-delay="6" aria-pressed="true">晚六拍</button>
+    </div>
+    <div id="track"></div>
+    <div class="time-scrubber">
+      <label for="step">暂停在第 <output id="step-value">7</output> 拍</label>
+      <input id="step" type="range" min="0" max="119" value="7" aria-describedby="step-help">
+      <div class="step-buttons"><button id="previous" type="button">← 上一拍</button><span id="step-help">拖动，或聚焦滑块后按方向键</span><button id="next" type="button">下一拍 →</button></div>
+    </div>
+    <p id="observation" class="observation" role="status" aria-live="polite"></p>
+    <details><summary>展开这一拍的算式与两个参数</summary>
+      <div class="controls"><label for="gain">回应程度 K：<output id="gain-value"></output><input id="gain" type="range" min="0.5" max="14" step="0.5" value="4"></label><label for="delay">延迟拍数：<output id="delay-value"></output><input id="delay" type="range" min="0" max="12" value="6"></label></div>
+      <dl id="ledger"></dl>
+      <p class="limits">每拍 0.1 s，目标 1 m，速度限制 ±1.5 m/s。无噪声，无惯性、摩擦与电机动态；改变参数会重算整段轨迹，并保留当前查看的拍数。</p>
+    </details>
+  </main>
+  <noscript>本例第 7 拍：实际位置 1.05 m，延迟六拍收到的是第 1 拍的位置 0.15 m，仍给出 +1.5 m/s 的速度命令。正文保留了完整算式与复算表。</noscript>
+  <script type="module" src="./reader.js"></script>
+</body></html>

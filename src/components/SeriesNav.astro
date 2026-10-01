@@ -1,4 +1,5 @@
 ---
+import { t } from '../i18n';
 import { withBase } from '../utils/url';
 /**
  * 合集导航：显示"本系列第 n / N 篇"、全部篇目和上下篇。
@@ -18,9 +19,9 @@ const next = idx >= 0 && idx < entries.length - 1 ? entries[idx + 1] : undefined
 
 <aside class="series hand-card taped single">
   <p class="series-head">
-    <span class="postit blue">📚 合集</span>
+    <span class="postit blue">{t.post.series}</span>
     <strong>{name}</strong>
-    {idx >= 0 && <span class="meta">第 {idx + 1} / {entries.length} 篇</span>}
+    {idx >= 0 && <span class="meta">{t.post.seriesPos(idx + 1,entries.length)}</span>}
   </p>
   <ol class="series-list">
     {

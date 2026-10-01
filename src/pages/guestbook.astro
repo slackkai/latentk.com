@@ -1,4 +1,5 @@
 ---
+import { t } from '../i18n';
 /**
  * 留言：一张手绘信纸，提交后通过 Web3Forms 发到站长邮箱，不公开展示。
  */
@@ -8,14 +9,14 @@ const WEB3FORMS_KEY = config.features.guestbook ? config.guestbook.web3formsKey 
 const ready = WEB3FORMS_KEY.length > 0;
 ---
 
-<BaseLayout title="留言" description={`给 ${SITE.author} 写一封信`}>
+<BaseLayout title={t.guestbook.pageTitle} description={t.guestbook.pageDesc(SITE.author)}>
   <section class="container section">
-    <span class="postit reveal" style="--i:0">✉️ 留言</span>
+    <span class="postit reveal" style="--i:0">{t.guestbook.badge}</span>
     <h1 class="page-title reveal" style="--i:1">Guestbook</h1>
-    <p class="page-desc reveal" style="--i:2">写在信纸上的话会直接寄到我的邮箱，不会公开展示。想说什么都行。</p>
+    <p class="page-desc reveal" style="--i:2">{t.guestbook.desc}</p>
 
     <div class="letter-wrap reveal" style="--i:3">
-      <form class="letter" id="letter" data-key={WEB3FORMS_KEY} data-site={SITE.title} novalidate>
+      <form data-sending={t.guestbook.sending} data-thanks={t.guestbook.thanks} data-failed={t.guestbook.failed('{error}')} data-network-error={t.guestbook.networkError} class="letter" id="letter" data-key={WEB3FORMS_KEY} data-site={SITE.title} novalidate>
         <div class="stamp" aria-hidden="true">
           <svg viewBox="0 0 60 60">
             <rect x="4" y="4" width="52" height="52" rx="3" stroke-dasharray="3 3" />
@@ -26,15 +27,15 @@ const ready = WEB3FORMS_KEY.length > 0;
         <p class="letter-to">To: <strong>{SITE.author}</strong></p>
 
         <label class="field">
-          <span>你的名字</span>
-          <input name="name" type="text" required maxlength="60" autocomplete="name" placeholder="怎么称呼你" />
+          <span>{t.guestbook.name}</span>
+          <input name="name" type="text" required maxlength="60" autocomplete="name" placeholder={t.guestbook.namePlaceholder} />
         </label>
         <label class="field">
-          <span>邮箱 <em class="meta">（可选，方便我回信）</em></span>
+          <span>{t.guestbook.email} <em class="meta">{t.guestbook.emailOptional}</em></span>
           <input name="email" type="email" maxlength="120" autocomplete="email" placeholder="you@example.com" />
         </label>
         <label class="field">
-          <span>想说的话</span>
+          <span>{t.guestbook.message}</span>
           <textarea name="message" required minlength="2" maxlength="3000" rows="8" placeholder="……"></textarea>
         </label>
         <!-- 蜜罐：机器人会填，人看不见 -->
@@ -42,13 +43,13 @@ const ready = WEB3FORMS_KEY.length > 0;
 
         <div class="letter-foot">
           <p class="meta" id="letter-status" aria-live="polite">
-            {ready ? '寄出后我会收到邮件。' : '留言尚未配置：站长需要在 src/config.ts 填入 Web3Forms key。'}
+            {ready ? t.guestbook.readyHint : t.guestbook.notConfigured}
           </p>
-          <button class="hand-btn" type="submit" id="letter-send" disabled={!ready}>寄出 →</button>
+          <button class="hand-btn" type="submit" id="letter-send" disabled={!ready}>{t.guestbook.send}</button>
         </div>
 
         <div class="sent" id="letter-sent" hidden aria-hidden="true">
-          <span class="sent-stamp">已寄出</span>
+          <span class="sent-stamp">{t.guestbook.sentStamp}</span>
         </div>
       </form>
     </div>
@@ -233,7 +234,7 @@ const ready = WEB3FORMS_KEY.length > 0;
       };
       form.classList.add('is-sending');
       btnEl.disabled = true;
-      statusEl.textContent = '正在寄出…';
+      statusEl.textContent = form.dataset.sending || 'Sending…';
       try {
         const res = await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
@@ -244,12 +245,12 @@ const ready = WEB3FORMS_KEY.length > 0;
         if (!res.ok || !data.success) throw new Error(data.message || `HTTP ${res.status}`);
         form.classList.remove('is-sending');
         sentEl.hidden = false;
-        statusEl.textContent = '收到了，谢谢。';
+        statusEl.textContent = form.dataset.thanks || 'Thank you.';
         form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach((el) => (el.disabled = true));
       } catch (err) {
         form.classList.remove('is-sending');
         btnEl.disabled = false;
-        statusEl.textContent = `没寄出去：${err instanceof Error ? err.message : '网络错误'}。稍后再试，或直接发邮件。`;
+        statusEl.textContent = (form.dataset.failed || '{error}').replace('{error}',err instanceof Error ? err.message : (form.dataset.networkError || 'Network error'));
       }
     });
   }

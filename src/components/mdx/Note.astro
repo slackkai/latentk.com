@@ -6,10 +6,11 @@
  * 宽屏浮在右侧页边，窄屏点击上标展开。编号由 CSS 计数器自动生成。
  * 普通 Markdown 写 :note[批注内容] 即可（见 src/markdown/directives.mjs 与 docs/SYNTAX.md），后台工具栏有对应按钮。
  */
+const id = 'note-' + crypto.randomUUID();
 ---
 
-<label class="note-wrap">
-  <input type="checkbox" class="note-toggle" aria-label="展开批注" />
-  <span class="note-ref"></span>
-  <span class="note"><slot /></span>
-</label>
+<span class="note-wrap">
+  <input type="checkbox" class="note-toggle" aria-label="注释" id={id} aria-controls={id + '-body'} />
+  <label class="note-ref" for={id}></label>
+  <span class="note" id={id + '-body'}><slot /></span>
+</span>

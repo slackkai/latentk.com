@@ -14,7 +14,7 @@ const showSignoff = Astro.props.signoff !== false && config.site.signoffs.length
     {showSignoff && <SignOff />}
     <div class="footer-inner">
       <p>
-        © {year} <a href={withBase('/')} class="wavy">{SITE.title}</a> · {SITE.tagline}
+        © {year} <a href={withBase('/')} class="wavy">{SITE.title}</a>{SITE.tagline && ` · ${SITE.tagline}`}
       </p>
       <ul class="footer-links">
         {config.features.guestbook && <li><a href={withBase('/guestbook/')}>{t.footer.guestbook}</a></li>}

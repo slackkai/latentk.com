@@ -8,7 +8,7 @@ import Search from './Search.astro';
 
 const path = Astro.url.pathname;
 const isActive = (href: string) => (href === '/' ? path === withBase('/') : path.startsWith(withBase(href)));
-const mark = SITE.author.trim().charAt(0).toUpperCase() || 'K';
+const mark = SITE.author.trim().charAt(0).toUpperCase() || '✎';
 ---
 
 <header class="site-header" data-auto-hide={String(config.interactions.autoHideHeader)} data-pagefind-ignore>
@@ -105,6 +105,9 @@ const mark = SITE.author.trim().charAt(0).toUpperCase() || 'K';
   }
   .brand-text {
     white-space: nowrap;
+    max-width: 16rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   @media (max-width: 479px) {
     .brand-text { display: none; }
@@ -228,12 +231,20 @@ const mark = SITE.author.trim().charAt(0).toUpperCase() || 'K';
       if (travel >= 10) header.classList.toggle('is-hidden', direction > 0);
     };
     show();
+    document.addEventListener('embed:align', () => {
+      // Screen fitting uses the full viewport when auto-hide is enabled.
+      if (header.dataset.autoHide === 'true') header.classList.add('is-hidden');
+      lastY = Math.max(0, window.scrollY); travel = 0; direction = 0;
+    }, { signal });
     nav.querySelectorAll('li').forEach((li, i) => li.style.setProperty('--i', String(i)));
     btn.addEventListener('click', () => {
       const open = nav.hidden;
       nav.hidden = !open;
       btn.setAttribute('aria-expanded', String(open));
       show();
+    }, { signal });
+    header.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !nav.hidden) { closeMenu(); btn.focus(); }
     }, { signal });
     nav.addEventListener('click', (event) => {
       if ((event.target as Element).closest('a')) closeMenu();

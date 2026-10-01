@@ -9,7 +9,7 @@ body { display: block; min-height: 0; margin: 0; }
 .cms-entry-header { margin-bottom: 2.5rem; }
 .cms-entry-kicker, .cms-entry-chips, .cms-entry-tags, .cms-entry-links { display: flex; flex-wrap: wrap; gap: .4rem .6rem; align-items: center; }
 .cms-entry-title { margin: 1rem 0 .5rem; font-size: clamp(2rem, 5vw, 3rem); }
-.cms-entry-description { margin: 0 0 .5rem; color: var(--pencil-60); font-size: 1.2rem; }
+.cms-entry-description { margin: 0 0 1rem; color: var(--pencil-60); font-size: 1.08rem; line-height: 1.75; }
 .cms-entry-meta { margin: .5rem 0; color: var(--pencil-45); font-size: .9rem; }
 .cms-entry-chips, .cms-entry-tags, .cms-entry-links { margin-top: .75rem; }
 .cms-chip { display: inline-block; font-size: .85rem; line-height: 1.5; padding: .05rem .6rem; border: 2px solid var(--pencil-25); border-radius: var(--radius-wobble-sm); color: var(--pencil-60); }

@@ -1,5 +1,6 @@
 ---
 import { withBase } from '../utils/url';
+import { t } from '../i18n';
 /**
  * 首页板块入口卡片
  */
@@ -19,9 +20,9 @@ const { href, emoji, label, subtitle, desc, count, unit = '篇', rotate = '0deg'
 
 <a href={withBase(href)} class="hand-card is-link sec-card reveal taped single" style={`--r:${rotate}; --i:${index}`}>
   <div class="sec-emoji" aria-hidden="true">{emoji}</div>
-  <h2 class="sec-title">{label} <span class="sec-zh">{subtitle}</span></h2>
+  <h2 class="sec-title">{label} {subtitle && subtitle !== label && <span class="sec-zh">{subtitle}</span>}</h2>
   <p class="sec-desc">{desc}</p>
-  <span class="sec-go">去看看 <span class="arrow">→</span></span>
+  <span class="sec-go">{t.common.readMore} <span class="arrow">→</span></span>
   <p class="meta sec-count">{count} {unit}</p>
 </a>
 

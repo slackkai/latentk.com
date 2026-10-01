@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build && node scripts/build-search.mjs",
     "preview": "astro preview",
     "preview:site": "npm run build && npm run verify && astro preview",
     "dev:full": "npm run search:dev && npm run dev",
@@ -17,7 +17,8 @@
     "new": "node scripts/new-post.mjs",
     "test": "node --test tests/*.test.mjs",
     "verify": "node scripts/verify-build.mjs",
-    "test:production": "node scripts/test-production.mjs"
+    "test:production": "node scripts/test-production.mjs",
+    "setup": "node scripts/setup.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.3.1",

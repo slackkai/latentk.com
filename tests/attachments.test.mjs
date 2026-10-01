@@ -54,6 +54,8 @@ test('content directories and relative URL resolution', () => {
   assert.equal(resolveContentUrl('attachments/a.webp?v=2#x', 'dailies'), '/dailies/attachments/a.webp?v=2#x');
   assert.equal(resolveContentUrl('../other/', 'projects/arm'), '/projects/other/');
   assert.equal(resolveContentUrl('log/index.md', 'projects/arm'), '/projects/arm/log/');
+  assert.equal(resolveContentUrl('./attachments/outline.md?download=1#intro', 'library'), '/library/attachments/outline.md?download=1#intro');
+  assert.equal(resolveContentUrl('./attachments/demo/index.mdx', 'projects/arm'), '/projects/arm/attachments/demo/index.mdx');
   assert.equal(resolveContentUrl('../../insight/post.mdx', 'projects/arm'), '/insight/post/');
   assert.equal(resolveContentUrl('../../../../etc/passwd', 'projects/arm'), '/etc/passwd', 'normalised, never escapes the site root');
   assert.equal(resolveContentUrl('/uploads/a.webp', 'projects/arm'), '/uploads/a.webp');

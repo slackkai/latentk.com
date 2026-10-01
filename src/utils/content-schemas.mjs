@@ -56,6 +56,7 @@ export const contentSchemas = {
   dailies: z.object({ ...common, title: optionalText, mood: optionalText, location: optionalText, images: stringList }),
   library: z.object({
     ...common,
+    reviewed: optionalDate,
     type: z.enum(['book', 'paper', 'tool', 'course', 'article', 'video', 'dataset', 'other']).default('other'),
     url: optionalUrl,
     author: optionalText,

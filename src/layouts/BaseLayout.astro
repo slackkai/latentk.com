@@ -14,6 +14,7 @@ interface Props {
   image?: string;
   type?: 'website' | 'article';
   publishedTime?: Date;
+  modifiedTime?: Date;
   /** 页脚是否显示随机结束语 */
   signoff?: boolean;
   searchIndex?: boolean;
@@ -32,7 +33,7 @@ const noindex = hiddenSection || section === '404' || section === 'drafts' || se
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <ClientRouter />
   </head>
-  <body>
+  <body data-viewer-labels={JSON.stringify(t.md.viewer)} data-note-read={t.md.readNote} data-note-expand={t.md.note} data-code-copy={String(config.features.codeCopy)} data-image-zoom={String(config.features.imageZoom)} data-copy-failed={t.md.copyFailed} data-image-label={t.md.zoom} data-image-close={t.md.closeImage}>
     <a class="skip sr-only" href="#main">{t.common.skipToContent}</a>
     <Header />
     <main id="main" transition:name="main" data-pagefind-body={searchIndex && !noindex || undefined} data-pagefind-ignore={noindex || undefined}>

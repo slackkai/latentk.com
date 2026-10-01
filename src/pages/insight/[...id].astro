@@ -2,24 +2,17 @@
 import { withBase } from '../../utils/url';
 import { render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
-import { getPosts, getAllTagged, getSeries, readingStats, gitLastModified, relatedTo } from '../../utils/content';
+import { getArticlePaths, articleContext, articleNeighbor } from '../../utils/articles';
 
 export async function getStaticPaths() {
-  const posts = await getPosts('insight');
-  return posts.map((post, i) => ({
-    params: { id: post.id },
-    props: { post, prev: posts[i + 1], next: posts[i - 1] },
-  }));
+  return getArticlePaths('insight');
 }
 
 const { post, prev, next } = Astro.props;
 const { Content, headings } = await render(post);
 const d = post.data;
 
-const stats = readingStats(post.body);
-const modified = await gitLastModified(post.filePath);
-const related = relatedTo(post, await getAllTagged());
-const series = d.series ? { name: d.series.name, entries: await getSeries(d.series.name), current: post } : undefined;
+const context = await articleContext(post);
 ---
 
 <PostLayout
@@ -35,11 +28,9 @@ const series = d.series ? { name: d.series.name, entries: await getSeries(d.seri
   tags={d.tags}
   image={d.cover}
   headings={headings}
-  meta={{ ...stats, modified }}
-  series={series}
-  related={related}
-  prev={prev && { href: `/insight/${prev.id}/`, title: prev.data.title }}
-  next={next && { href: `/insight/${next.id}/`, title: next.data.title }}
+  {...context}
+  prev={articleNeighbor(prev)}
+  next={articleNeighbor(next)}
 >
   {d.cover && <img src={withBase(d.cover)} alt="" class="cover" />}
   <Content />

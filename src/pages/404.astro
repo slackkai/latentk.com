@@ -1,4 +1,5 @@
 ---
+import { t } from '../i18n';
 import { withBase } from '../utils/url';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
@@ -26,10 +27,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <text class="q" x="150" y="60">?</text>
     </svg>
     <div class="reveal" style="--i:1">
-      <span class="postit">🙈 定位失败</span>
+      <span class="postit">{t.notFound.badge}</span>
       <h1 class="big">404</h1>
-      <p class="page-desc">这台机器人把地图弄丢了，正在原地打转。</p>
-      <a href={withBase('/')} class="hand-btn">带它回首页 →</a>
+      <p class="page-desc">{t.notFound.desc}</p>
+      <a href={withBase('/')} class="hand-btn">{t.notFound.back}</a>
     </div>
   </section>
 </BaseLayout>

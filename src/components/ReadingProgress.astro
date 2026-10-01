@@ -1,11 +1,12 @@
 ---
+import { t } from '../i18n';
 /**
  * 阅读进度：页面右侧一条竖向轨道，填充随滚动下移，小圆钮标出当前位置。
  * 可拖动：拖圆钮或点轨道任意位置会滚到对应进度。仅在 ≥900px 显示。
  */
 ---
 
-<div class="read-progress" id="read-progress" data-pagefind-ignore role="slider" aria-label="阅读进度" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+<div class="read-progress" id="read-progress" data-pagefind-ignore role="slider" aria-label={t.post.readingProgress} aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
   <div class="read-progress-hit" id="read-progress-hit"></div>
   <div class="read-progress-fill" id="read-progress-fill"></div>
   <div class="read-progress-knob" id="read-progress-knob"></div>

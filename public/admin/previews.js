@@ -4,13 +4,14 @@
 // published; relative media go through getAsset, which also knows unsaved uploads.
 // Cover and gallery fields keep the native image widgets.
 (() => {
-  const sections = { academic: '学术', insight: '洞见', dailies: '日常', library: '资料库', projects: '项目' };
-  const labels = {
+  const sections = globalThis.NotebookMarkdown?.previewLabels?.sections || { academic: '学术', insight: '洞见', dailies: '日常', library: '资料库', projects: '项目' };
+  const labels = globalThis.NotebookMarkdown?.previewLabels?.labels || {
     active: '进行中', done: '已完成', archived: '已归档', idea: '构想中',
     todo: '待读', reading: '在读', book: '书籍', paper: '论文', tool: '工具',
     course: '课程', article: '文章', video: '视频', dataset: '数据集', other: '其他',
     note: '笔记', talk: '报告', project: '项目',
   };
+  const ui = globalThis.NotebookMarkdown?.previewLabels?.ui || {untitled:'未命名文章',updated:'更新于',draft:'草稿',commentsOff:'评论关闭',reviewed:'资源核验',empty:'正文尚未填写，在左侧开始写作即可实时预览。',links:'相关链接',done:'已读'};
   const text = value => value == null ? '' : String(value).trim();
   const date = value => value instanceof Date ? value.toISOString().slice(0, 10) : text(value).slice(0, 10);
   const list = value => Array.isArray(value) ? value.filter(v => text(v)) : [];
@@ -18,12 +19,13 @@
   const tag = (value, className = '') => h('span', { className: `cms-chip ${className}`, key: value }, value);
   const compactLine = values => values.filter(Boolean).join(' · ');
   const isAsset = url => !!url && !/^(?:[a-z][a-z0-9+.-]*:|\/\/|#|\?)/i.test(url);
-  const MEDIA = [['img', 'src'], ['video', 'src'], ['video', 'poster'], ['source', 'src']];
+  const MEDIA = [['img', 'src'], ['video', 'src'], ['video', 'poster'], ['source', 'src'], ['source', 'srcset']];
 
   const NotebookBody = createClass({
-    componentDidMount() { this.resolveMedia(0); this.highlightCode(); },
+    componentDidMount() { this.resolveMedia(0); this.highlightCode(); this.enhanceNotes(); },
     componentDidUpdate() { this.resolveMedia(0); this.highlightCode(); },
-    componentWillUnmount() { clearTimeout(this.timer); },
+    componentWillUnmount() { clearTimeout(this.timer); this.disposeNotes?.(); },
+    enhanceNotes() { this.disposeNotes?.(); this.disposeNotes = globalThis.NotebookMarkdown?.enhance?.(this.root); },
     highlightCode() { globalThis.NotebookMarkdown?.highlight?.(this.root).catch(() => {}); },
     // Blob URLs of repository files arrive asynchronously, so unresolved media are retried briefly.
     resolveMedia(attempt) {
@@ -58,14 +60,15 @@
       render() {
         const { entry, widgetFor } = this.props;
         const d = entry.get('data')?.toJS() ?? {};
-        const title = text(d.title) || (section === 'dailies' ? date(d.date) : '') || '未命名文章';
+        const title = text(d.title) || (section === 'dailies' ? date(d.date) : '') || ui.untitled;
         const meta = compactLine([
-          date(d.date), d.updated && `更新于 ${date(d.updated)}`,
+          date(d.date), d.updated && `${ui.updated} ${date(d.updated)}`,
+          section === 'library' && d.reviewed && `${ui.reviewed} ${date(d.reviewed)}`,
           text(d.author) || list(d.authors).join('、'), text(d.venue),
           d.year && `${d.year} 年`,
           text(d.mood), text(d.location),
         ]);
-        const status = section === 'library' && d.status === 'done' ? '已读' : labels[d.status];
+        const status = section === 'library' && d.status === 'done' ? ui.done : labels[d.status];
         const chips = [labels[d.kind || d.type], status,
           Number.isInteger(d.rating) && d.rating >= 1 && d.rating <= 5 ? '★'.repeat(d.rating) : '',
           d.series?.name ? `${d.series.name}${d.series.order ? ` · 第 ${d.series.order} 篇` : ''}` : '',
@@ -80,14 +83,14 @@
               d.draft === true && tag('草稿 · 不公开', 'cms-draft'),
               d.featured === true && tag('★ 精选'),
               d.pinned === true && tag('置顶'),
-              d.comments === false && tag('评论关闭'),
+              d.comments === false && tag(ui.commentsOff),
             ),
             h('h1', { className: 'cms-entry-title' }, title),
             text(d.description) && h('p', { className: 'cms-entry-description' }, text(d.description)),
             meta && h('p', { className: 'cms-entry-meta' }, meta),
             chips.length > 0 && h('div', { className: 'cms-entry-chips' }, ...chips.map(value => tag(value))),
             list(d.tags).length > 0 && h('div', { className: 'cms-entry-tags' }, ...list(d.tags).map(value => h('span', { className: 'tag', key: value }, `#${value}`))),
-            links.length > 0 && h('nav', { className: 'cms-entry-links', 'aria-label': '相关链接' },
+            links.length > 0 && h('nav', { className: 'cms-entry-links', 'aria-label': ui.links },
               ...links.map(([name, url]) => h('a', { key: name, href: url, target: '_blank', rel: 'noopener noreferrer' }, `${name} ↗`))),
           ),
           text(d.video) ? h('div', { className: 'cms-entry-cover' }, widgetFor('video'))

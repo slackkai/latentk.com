@@ -5,6 +5,12 @@
  *     attributes and grow to the height of their content unless a height was given
  *   - code blocks get a language tag that turns into a copy button on hover
  */
+import { mountNotes } from './notes.mjs';
+import { mountImages } from './images.mjs';
+import { fitEmbed, mountEmbed } from './embeds.mjs';
+let disposeNotes: (() => void) | undefined;
+let disposeImages: (() => void) | undefined;
+
 const TOKENS = [
   '--paper', '--paper-2', '--erased', '--pencil', '--pencil-60', '--pencil-45', '--pencil-25', '--pencil-12',
   '--marker', '--pen', '--postit', '--postit-2', '--postit-3', '--tape', '--font-body', '--font-mono',
@@ -34,36 +40,37 @@ function syncTheme(frame: HTMLIFrameElement) {
   }
 }
 
-function fit(frame: HTMLIFrameElement) {
-  const doc = frame.contentDocument;
-  if (!doc?.documentElement || frame.dataset.fixed) return;
-  // 量 body 的内容高度：documentElement.scrollHeight 被 iframe 视口钳住，高度只能涨不能跌。
-  // 再加 2px 缓冲：高度恰好卡在分界上时纵向滚动条会一闪一灭，它占掉的 ~15px 宽度又反过来
-  // 改变折行高度，高度和滚动条互相追逐，嵌入页会持续闪烁。
-  const body = doc.body;
-  const content = body ? Math.max(body.scrollHeight, body.getBoundingClientRect().height) : doc.documentElement.scrollHeight;
-  const height = Math.ceil(content) + 2;
-  if (height > 0 && frame.style.height !== `${height}px`) frame.style.height = `${height}px`;
-}
+function fit(frame: HTMLIFrameElement) { fitEmbed(frame,window); }
 
-function attach(frame: HTMLIFrameElement) {
+function attach(frame: HTMLIFrameElement, signal: AbortSignal) {
   if (frame.dataset.bound) return;
   frame.dataset.bound = '1';
+  const disposeEmbed = mountEmbed(frame,window);
+  frame.addEventListener('embed:resize',()=>fit(frame),{signal});
+  let observer: ResizeObserver | undefined;
   const ready = () => {
+    observer?.disconnect();
     // 自动高度模式不需要滚动条：让它根本不出现，切断「滚动条宽度 ⇄ 内容高度」的反馈回路。
-    const root = frame.contentDocument?.documentElement;
-    if (root && !frame.dataset.fixed) root.style.overflow = 'hidden';
+    // fitEmbed selects scrolling only when the content exceeds the viewport cap.
     syncTheme(frame);
     fit(frame);
     const body = frame.contentDocument?.body;
-    if (body && !frame.dataset.fixed && 'ResizeObserver' in window) new ResizeObserver(() => fit(frame)).observe(body);
+    if (body && !frame.dataset.fixed && 'ResizeObserver' in window) {
+      observer = new ResizeObserver(() => fit(frame));
+      observer.observe(body);
+    }
   };
-  frame.addEventListener('load', ready);
+  frame.addEventListener('load', ready, { signal });
+  signal.addEventListener('abort', () => {
+    observer?.disconnect();
+    disposeEmbed();
+    delete frame.dataset.bound;
+  }, { once: true });
   const doc = frame.contentDocument;
   if (doc && doc.readyState === 'complete' && doc.location.href !== 'about:blank') ready();
 }
 
-const COPY = { copy: 'Copy', done: 'Copied', fail: 'Failed' };
+const COPY = { copy: 'Copy', done: 'Copied' };
 
 function languageName(lang: string | undefined) {
   return lang || 'plain';
@@ -99,7 +106,7 @@ function addCopyButton(pre: HTMLPreElement) {
     label('code-copy-lang', languageName(pre.dataset.language)),
     label('code-copy-copy', COPY.copy),
     label('code-copy-done', COPY.done),
-    label('code-copy-fail', COPY.fail),
+    label('code-copy-fail', document.body.dataset.copyFailed || 'Failed'),
   );
   let timer: number | undefined;
   button.addEventListener('click', async () => {
@@ -118,9 +125,18 @@ function addCopyButton(pre: HTMLPreElement) {
   pre.prepend(button);
 }
 
+let lifecycle: AbortController | undefined;
 function init() {
-  document.querySelectorAll<HTMLIFrameElement>('iframe.embed-page').forEach(attach);
-  document.querySelectorAll<HTMLPreElement>('.prose pre').forEach(addCopyButton);
+  lifecycle?.abort();
+  disposeNotes?.();
+  disposeImages?.();
+  const root = document.querySelector<HTMLElement>('main');
+  disposeNotes = root ? mountNotes(root, window) : undefined;
+  disposeImages = root ? mountImages(root, window) : undefined;
+  lifecycle = new AbortController();
+  const { signal } = lifecycle;
+  document.querySelectorAll<HTMLIFrameElement>('iframe.embed-page').forEach(frame => attach(frame, signal));
+  if (document.body.dataset.codeCopy !== 'false') document.querySelectorAll<HTMLPreElement>('.prose pre').forEach(addCopyButton);
 }
 
 document.addEventListener('click', (event) => {
@@ -133,3 +149,4 @@ new MutationObserver(() => document.querySelectorAll<HTMLIFrameElement>('iframe.
   .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-palette'] });
 init();
 document.addEventListener('astro:page-load', init);
+document.addEventListener('astro:before-swap', () => { lifecycle?.abort(); disposeNotes?.(); disposeImages?.(); });

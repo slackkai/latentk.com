@@ -2,19 +2,18 @@
 import { withBase } from '../../utils/url';
 import { render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
-import { getPosts } from '../../utils/content';
+import { formatDate } from '../../utils/content';
+import { t } from '../../i18n';
+import { getArticlePaths, articleContext, articleNeighbor } from '../../utils/articles';
 
 export async function getStaticPaths() {
-  const items = await getPosts('library');
-  return items.map((post, i) => ({
-    params: { id: post.id },
-    props: { post, prev: items[i + 1], next: items[i - 1] },
-  }));
+  return getArticlePaths('library');
 }
 
 const { post, prev, next } = Astro.props;
 const { Content, headings } = await render(post);
 const d = post.data;
+const context = await articleContext(post);
 const STATUS_LABEL: Record<string, string> = { todo: '待读', reading: '在读', done: '已读' };
 ---
 
@@ -31,13 +30,15 @@ const STATUS_LABEL: Record<string, string> = { todo: '待读', reading: '在读'
   tags={d.tags}
   image={d.cover}
   headings={headings}
-  prev={prev && { href: `/library/${prev.id}/`, title: prev.data.title }}
-  next={next && { href: `/library/${next.id}/`, title: next.data.title }}
+  {...context}
+  prev={articleNeighbor(prev)}
+  next={articleNeighbor(next)}
 >
   <div slot="extra" class="lib-meta">
     {d.author && <p class="meta">作者：{d.author}</p>}
+    {d.reviewed && <p class="meta">资源核验：<time datetime={d.reviewed.toISOString()}>{formatDate(d.reviewed)}</time></p>}
     <div class="row">
-      <span class="postit green">{d.type}</span>
+      <span class="postit green">{t.library.types[d.type]}</span>
       {d.status && <span class="postit blue">{STATUS_LABEL[d.status] ?? d.status}</span>}
       {
         d.rating && (

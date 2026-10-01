@@ -1,0 +1,11 @@
+---
+import LibraryIndex from '../../../components/LibraryIndex.astro';
+import { getPosts } from '../../../utils/content';
+import { config, isEnabled } from '../../../config';
+export async function getStaticPaths() {
+ if(!isEnabled('library'))return[];
+ const items=await getPosts('library');
+ return Array.from({length:Math.max(0,Math.ceil(items.length/config.library.pageSize)-1)},(_,i)=>({params:{page:String(i+2)},props:{page:i+2}}));
+}
+---
+<LibraryIndex page={Astro.props.page} />

@@ -2,14 +2,10 @@
 import { withBase } from '../../utils/url';
 import { render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
-import { getPosts, getAllTagged, getSeries, readingStats, gitLastModified, relatedTo } from '../../utils/content';
+import { getArticlePaths, articleContext, articleNeighbor } from '../../utils/articles';
 
 export async function getStaticPaths() {
-  const posts = await getPosts('academic');
-  return posts.map((post, i) => ({
-    params: { id: post.id },
-    props: { post, prev: posts[i + 1], next: posts[i - 1] },
-  }));
+  return getArticlePaths('academic');
 }
 
 const { post, prev, next } = Astro.props;
@@ -25,10 +21,7 @@ const linkList = [
   ['Site', links.site],
 ].filter(([, url]) => url) as [string, string][];
 
-const stats = readingStats(post.body);
-const modified = await gitLastModified(post.filePath);
-const related = relatedTo(post, await getAllTagged());
-const series = d.series ? { name: d.series.name, entries: await getSeries(d.series.name), current: post } : undefined;
+const context = await articleContext(post);
 ---
 
 <PostLayout
@@ -43,11 +36,9 @@ const series = d.series ? { name: d.series.name, entries: await getSeries(d.seri
   updated={d.updated}
   tags={d.tags}
   headings={headings}
-  meta={{ ...stats, modified }}
-  series={series}
-  related={related}
-  prev={prev && { href: `/academic/${prev.id}/`, title: prev.data.title }}
-  next={next && { href: `/academic/${next.id}/`, title: next.data.title }}
+  {...context}
+  prev={articleNeighbor(prev)}
+  next={articleNeighbor(next)}
 >
   <div slot="extra" class="paper-meta">
     {d.authors && <p class="authors">{d.authors.join(', ')}</p>}

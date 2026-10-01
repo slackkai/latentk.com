@@ -1,9 +1,10 @@
 ---
 /**
  * /lab/ —— 个性化原型试验场。只在 `npm run dev` 下可见，生产构建不生成此页面。
- * 当前没有待审阅的原型。新提案会以独立区块加在这里。
+ * 待审阅提案使用独立页面，不影响正式文章的渲染与样式。
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../utils/url';
 
 export function getStaticPaths() {
   return import.meta.env.DEV ? [{ params: { slug: undefined } }] : [];
@@ -14,6 +15,7 @@ export function getStaticPaths() {
   <section class="container section">
     <span class="postit">🧪 Lab · 仅本地可见</span>
     <h1 class="page-title">原型试验场</h1>
-    <p class="page-desc">当前没有待审阅的原型。前四批已全部并入主站。</p>
+    <p class="page-desc">组合示例已接入正式主题。</p>
+    <p><a class="hand-btn" href={withBase('/projects/syntax-combinations/')}>打开组件组合 Showcase →</a></p>
   </section>
 </BaseLayout>

@@ -1,8 +1,14 @@
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { bundlePreviewRenderer } from './lib/bundle-cms-preview.mjs';
+import { themeSchema } from '../src/utils/theme.mjs';
 import { makeCmsConfig } from '../cms.config.mjs';
 import { resolveCmsRepository } from './lib/cms-repository.mjs';
+
+try { process.loadEnvFile('.env'); } catch (error) { if (error.code !== 'ENOENT') throw error; }
+
+const theme = themeSchema.parse(JSON.parse(await readFile(new URL('../src/data/theme.json', import.meta.url), 'utf8')));
+if (!theme.features.cms) { console.log('CMS disabled; Markdown and JSON editing remain available.'); process.exit(0); }
 
 let remote = '';
 if (!process.env.CMS_REPOSITORY && !process.env.GITHUB_REPOSITORY) {
@@ -12,7 +18,7 @@ if (!process.env.CMS_REPOSITORY && !process.env.GITHUB_REPOSITORY) {
 }
 const repo = resolveCmsRepository({ configured: process.env.CMS_REPOSITORY, workflow: process.env.GITHUB_REPOSITORY, remote });
 const site = JSON.parse(await readFile(new URL('../src/data/site.json', import.meta.url), 'utf8'));
-const config = makeCmsConfig({ repo, siteUrl: process.env.SITE_URL || site.url, base: process.env.BASE_PATH || '/' });
+const config = makeCmsConfig({ repo, siteUrl: process.env.SITE_URL || site.url, base: process.env.BASE_PATH || '/', theme });
 // Regenerated from node_modules every time, so nothing stale is deployed.
 await rm('public/admin/vendor', { recursive: true, force: true });
 await mkdir('public/admin/vendor', { recursive: true });

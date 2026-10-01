@@ -11,8 +11,8 @@ const { hero, badge, armIdle } = config.home;
   <div class="hero-copy">
     {badge && <span class="postit reveal" style="--i:0">{badge}</span>}
     <h1 class="hero-title reveal" style="--i:1">{SITE.title}<span class="hero-dot">.</span></h1>
-    <p class="hero-sub reveal" style="--i:2">{SITE.tagline}</p>
-    <p class="hero-desc reveal" style="--i:3">{SITE.description}</p>
+    {SITE.tagline && <p class="hero-sub reveal" style="--i:2">{SITE.tagline}</p>}
+    {SITE.description && <p class="hero-desc reveal" style="--i:3">{SITE.description}</p>}
   </div>
 
   {
@@ -42,7 +42,7 @@ const { hero, badge, armIdle } = config.home;
         <text class="note" x="250" y="60">← end effector</text>
         <text class="note" x="20" y="295">base</text>
       </svg>
-    ) : (
+    ) : hero === 'doodle' && (
       <svg class="doodle" viewBox="0 0 100 100" fill="none" aria-hidden="true">
         <path class="doodle-path" d="M10 50 Q30 10 50 50 T90 50" stroke="currentColor" stroke-width="3" stroke-dasharray="6 4" pathLength="100" />
         <circle class="doodle-dot" cx="85" cy="48" r="4" fill="currentColor" />

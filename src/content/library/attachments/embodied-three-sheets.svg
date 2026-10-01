@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="360.72pt" height="308.664pt" viewBox="0 0 360.72 308.664" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>LatentK · original constructed example</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 308.664
+L 360.72 308.664
+L 360.72 0
+L 0 0
+z
+" style="fill: #fbfaf6"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 76.572 110.053223
+L 323.208 110.053223
+Q 326.556 110.053223 326.556 106.852347
+L 326.556 55.10486
+Q 326.556 51.903985 323.208 51.903985
+L 76.572 51.903985
+Q 73.224 51.903985 73.224 55.10486
+L 73.224 106.852347
+Q 73.224 110.053223 76.572 110.053223
+z
+" clip-path="url(#pa9807ac416)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 76.572 190.075109
+L 323.208 190.075109
+Q 326.556 190.075109 326.556 186.874234
+L 326.556 135.126747
+Q 326.556 131.925872 323.208 131.925872
+L 76.572 131.925872
+Q 73.224 131.925872 73.224 135.126747
+L 73.224 186.874234
+Q 73.224 190.075109 76.572 190.075109
+z
+" clip-path="url(#pa9807ac416)" style="fill: #ffffff; stroke: #bc5635; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 76.572 270.096996
+L 323.208 270.096996
+Q 326.556 270.096996 326.556 266.896121
+L 326.556 215.148634
+Q 326.556 211.947758 323.208 211.947758
+L 76.572 211.947758
+Q 73.224 211.947758 73.224 215.148634
+L 73.224 266.896121
+Q 73.224 270.096996 76.572 270.096996
+z
+" clip-path="url(#pa9807ac416)" style="fill: #ffffff; stroke: #3b4f9e; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 19px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #263044" x="23.004" y="28.964377" transform="rotate(-0 23.004 28.964377)">三张纸，沿同一个任务走</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 24px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #3b4f9e" x="26.91" y="84.979698" transform="rotate(-0 26.91 84.979698)">01</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; fill: #263044" transform="translate(180.39 74.629323)">系统图</text>
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; fill: #263044" transform="translate(115.39 94.488041)">信息从哪里来？动作交给谁？</text>
+   </g>
+   <g id="patch_5">
+    <path d="M 199.89 113.654859
+Q 199.89 120.99097 199.89 127.209047
+" style="fill: none; stroke: #263044; stroke-linecap: round"/>
+    <path d="M 202.29 122.409047
+L 199.89 127.209047
+L 197.49 122.409047
+" style="fill: none; stroke: #263044; stroke-linecap: round"/>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 24px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #bc5635" x="26.91" y="165.001585" transform="rotate(-0 26.91 165.001585)">02</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; fill: #263044" transform="translate(173.89 154.651209)">数据说明</text>
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; fill: #263044" transform="translate(102.39 174.509928)">一个时刻，哪些量真正配在一起？</text>
+   </g>
+   <g id="patch_6">
+    <path d="M 199.89 193.676746
+Q 199.89 201.012857 199.89 207.230934
+" style="fill: none; stroke: #263044; stroke-linecap: round"/>
+    <path d="M 202.29 202.430934
+L 199.89 207.230934
+L 197.49 202.430934
+" style="fill: none; stroke: #263044; stroke-linecap: round"/>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 24px; font-family: 'Microsoft YaHei'; text-anchor: start; fill: #3b4f9e" x="26.91" y="245.023472" transform="rotate(-0 26.91 245.023472)">03</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; fill: #263044" transform="translate(180.39 234.673096)">评估卡</text>
+    <text style="font-size: 13px; font-family: 'Microsoft YaHei'; fill: #263044" transform="translate(115.39 254.531815)">怎样才算好？拿谁来作比较？</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pa9807ac416">
+   <rect x="12.96" y="12.96" width="334.8" height="282.744"/>
+  </clipPath>
+ </defs>
+</svg>

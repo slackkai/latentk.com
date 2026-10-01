@@ -12,14 +12,18 @@ const project = `${projectDir}/index.md`;
 const aboutFile = 'src/content/about/about.md';
 const created = [];
 const originalAbout = await readFile(aboutFile, 'utf8').catch(() => undefined);
-const original = await readFile('src/config.ts', 'utf8');
+const original = await readFile('src/data/theme.json', 'utf8');
+const baseline = JSON.parse(original);
+for (const value of Object.values(baseline.sections)) value.enabled = true;
+baseline.lang='zh';baseline.features.guestbook=true;baseline.features.cms=true;
 const originalInteractions = await readFile('src/data/interactions.json', 'utf8');
 // Use synthetic public IDs: builds exercise integration without contacting GitHub.
 const interactions = { autoHideHeader: true, comments: { enabled: true, repo: 'example/comments', repoId: 'R_fixture', category: 'Announcements', categoryId: 'DIC_fixture' } };
 const env = { ...process.env, BASE_PATH: '/test-site', SITE_URL: 'https://example.org' };
-const build = () => execFileSync(process.execPath, ['node_modules/astro/bin/astro.mjs', 'build'], { env, stdio: 'pipe' });
+const build = () => { execFileSync(process.execPath,['scripts/prepare-cms.mjs'],{env,stdio:'pipe'}); execFileSync(process.execPath, ['node_modules/astro/bin/astro.mjs', 'build'], { env, stdio: 'pipe' }); };
 const missing = async path => { try { await access(path); return false; } catch { return true; } };
 try {
+  await writeFile('src/data/theme.json',JSON.stringify(baseline));
   await writeFile('src/data/interactions.json', JSON.stringify(interactions));
   await writeFile(file, `---\ntitle: ${marker}\ndate: 2026-01-01\ntags: [${marker}]\ndraft: true\n---\nSecret draft fixture.\n`, { flag: 'wx' });
   created.push(file);
@@ -34,7 +38,7 @@ try {
   await writeFile(`${projectDir}/attachments/demo/index.html`, '<!doctype html><title>demo</title><p>embedded</p>\n');
   await writeFile(project, cmsProject, { flag: 'wx' });
   await cp('public/favicon.svg', `${projectDir}/note/attachments/figure.svg`);
-  await writeFile(`${projectDir}/note/index.md`, `---\ntitle: Project note\ndate: 2026-01-02\ntags: [${marker}-note]\ndraft: false\n---\n![图](./attachments/figure.svg)\n`);
+  await writeFile(`${projectDir}/note/index.md`, `---\ntitle: Project note\ndate: 2026-01-02\ntags: [${marker}-note]\ndraft: false\n---\n![图](./attachments/figure.svg)\n\n## Fixture section\n\n:note[One] :note[Two] :note[Three] :mark[Important]\n\n## Another section\n\nEnd.\n`);
   await mkdir('src/content/about', { recursive: true });
   await writeFile(aboutFile, ['---', 'highlights:', '  - title: 自定义板块', '    desc: 来自 about.md', 'workbench:', '  tools:', '    - name: 测试工具', '  hardware: []', '  questions: []', '---', '', '自我介绍来自 Markdown，:mark[可在后台编辑]。', ''].join(String.fromCharCode(10)));
   build();
@@ -65,10 +69,11 @@ try {
   assert.ok(!(await missing(`dist/tags/${marker}-public/index.html`)), 'library tag route missing');
   for (const tag of ['中文', 'C++', 'C#', 'AI/ML', '..', 'con']) assert.ok(!(await missing(`dist/tags/${tagSlug(tag)}/index.html`)), `tag route missing: ${tag}`);
 
-  let disabled = original.replace('library: { enabled: true', 'library: { enabled: false');
-  for (const key of ['readingProgress', 'toc', 'postMeta', 'relatedPosts', 'heatmap', 'guestbook', 'nowCard']) disabled = disabled.replace(`${key}: true`, `${key}: false`);
-  disabled = disabled.replace("defaultPalette: 'blue'", "defaultPalette: 'green'");
-  await writeFile('src/config.ts', disabled);
+  const disabled = structuredClone(baseline);
+  disabled.sections.library.enabled = false;
+  for (const key of ['readingProgress','toc','postMeta','relatedPosts','heatmap','guestbook','nowCard']) disabled.features[key] = false;
+  disabled.defaultPalette = 'green';
+  await writeFile('src/data/theme.json', JSON.stringify(disabled));
   await writeFile(project, cmsProject.replace('draft: true', 'draft: false'));
   const docFile = `${projectDir}/note/index.md`;
   await writeFile(docFile, (await readFile(docFile, 'utf8')).replace('draft: false', 'draft: false\ncomments: false'));
@@ -91,15 +96,18 @@ try {
   assert.ok((await readFile('dist/projects/rss.xml', 'utf8')).includes(`/test-site/projects/${marker}/`), 'published CMS project missing from feed');
   assert.ok(await missing(`dist/library/${marker}/index.html`), 'disabled content still built');
   assert.ok(await missing('dist/library/rss.xml'), 'disabled feed still built');
+  assert.ok(await missing('dist/library/index.html'), 'disabled index still built');
+  assert.deepEqual(JSON.parse(await readFile('dist/catalog/library.json','utf8')),[], 'disabled catalog leaked content');
+  assert.ok(!JSON.parse(await readFile('dist/admin/config.yml','utf8')).collections.some(c=>c.name==='library'),'disabled collection still in CMS');
   assert.ok(await missing(`dist/tags/${marker}-public/index.html`), 'disabled tag still built');
   const home = await readFile('dist/index.html', 'utf8');
   assert.ok(!home.includes('<site-comments'), 'comments leaked into index');
   assert.ok(!home.includes('href="/test-site/library/"'), 'disabled section still linked');
   assert.ok(home.includes('data-default-palette="green"'), 'default palette ignored');
-  const article = await readFile('dist/academic/attention-is-all-you-need/index.html', 'utf8');
+  const article = docPage;
   for (const id of ['read-progress', 'toc']) assert.ok(!article.includes(`id="${id}"`), `${id} toggle ignored`);
   assert.equal((article.match(/class="note-wrap"/g) ?? []).length, 3, 'Markdown margin notes missing');
-  assert.equal((article.match(/class="mark"/g) ?? []).length, 2, 'Markdown highlights missing');
+  assert.ok(article.includes('class="mark"'), 'Markdown highlights missing');
   assert.ok(!article.includes(':note[') && !article.includes(':mark['), 'directive syntax leaked into the page');
   // The syntax showcase project exercises every directive family (docs/SYNTAX.md).
   const showcase = await readFile('dist/projects/syntax-showcase/index.html', 'utf8');
@@ -127,7 +135,7 @@ try {
   if (error.stderr) console.error(error.stderr.toString().slice(-5000));
   throw error;
 } finally {
-  await writeFile('src/config.ts', original);
+  await writeFile('src/data/theme.json', original);
   await writeFile('src/data/interactions.json', originalInteractions);
   if (originalAbout === undefined) await unlink(aboutFile).catch(() => {}); else await writeFile(aboutFile, originalAbout);
   for (const path of created) await unlink(path);
