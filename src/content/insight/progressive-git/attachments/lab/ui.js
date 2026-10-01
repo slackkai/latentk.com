@@ -282,7 +282,7 @@ export function mount(config) {
     previous = new Map();
     out.innerHTML = '';
     closeEditor();
-    for (const line of (config.intro ?? '这是在浏览器里模拟的终端，命令不会碰你的电脑。输入 help 看看能用哪些命令。').split('\n')) printRaw(`<span class="t-intro">${esc(line)}</span>`);
+    for (const line of (config.intro ?? '输入 help 查看命令。').split('\n')) printRaw(`<span class="t-intro">${esc(line)}</span>`);
     checkTasks();
     render(false);
   }
@@ -404,7 +404,7 @@ export function mount(config) {
   function openEditor(path) {
     editing = path;
     editor.hidden = false;
-    editor.querySelector('.editor-head').innerHTML = `编辑 <code>${esc(path)}</code> <small>（相当于在编辑器里打开它。保存之后文件变了，Git 会看到修改）</small>`;
+    editor.querySelector('.editor-head').innerHTML = `编辑 <code>${esc(path)}</code>`;
     textarea.value = world.dir.files[path] ?? '';
     editor.querySelector('.resolve').hidden = !/^<{7} /m.test(textarea.value);
     textarea.focus({ preventScroll: true });

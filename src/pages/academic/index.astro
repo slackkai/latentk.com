@@ -40,7 +40,7 @@ const kinds = [...new Set(posts.map((p) => p.data.kind))];
 
     <!-- 笔记与其他 -->
     <div class="notes-head reveal" style="--i:7">
-      <h2>{t.academic.notes} {t.academic.notesSub && <span class="muted-zh">{t.academic.notesSub}</span>}</h2>
+      <h2>{t.academic.notes}</h2>
       {
         kinds.length > 1 && (
           <div class="filters" role="group" aria-label={t.common.filterByType}>

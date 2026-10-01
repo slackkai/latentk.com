@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">首页那只机械臂，是怎么够到你的鼠标的</title><desc id="desc">点阵纸上的两种机械臂姿态，指尖指向同一十字靶。</desc>
+<defs><pattern id="dots" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#d9dcd8"/></pattern></defs>
+<rect width="1200" height="675" fill="#f6f7f4"/><rect width="1200" height="675" fill="url(#dots)"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M700 536h160M725 534l25-34h60l25 34" stroke="#1f2433" stroke-width="6"/>
+<path d="M780 500L920 420L990 230" stroke="#a2a7b1" stroke-width="5" stroke-dasharray="9 11"/>
+<path d="M780 500L752 319L990 230" stroke="#1f2433" stroke-width="11"/>
+<circle cx="780" cy="500" r="13" fill="#fff" stroke="#1f2433" stroke-width="6"/><circle cx="752" cy="319" r="13" fill="#fff" stroke="#1f2433" stroke-width="6"/>
+<path d="M974 213l25-20 17 7M989 248l31-8 6-16" stroke="#1f2433" stroke-width="6"/>
+<circle cx="990" cy="230" r="22" stroke="#c4562f" stroke-width="3" stroke-dasharray="5 6"/><path d="M954 230h72M990 194v72" stroke="#c4562f" stroke-width="3"/>
+<path d="M702 300Q600 260 570 318" stroke="#3b4f9e" stroke-width="3" stroke-dasharray="6 8"/></g>
+<g font-family="'LXGW WenKai Screen','KaiTi',serif" fill="#1f2433"><text x="80" y="190" font-size="29" fill="#3b4f9e">五张可以摸的运动学插图</text><text x="80" y="282" font-size="49">位置已经知道，</text><text x="80" y="355" font-size="49">姿势还没决定。</text><text x="83" y="467" font-size="25" fill="#626773">从两只肘，到三个关节轮流让步</text><text x="815" y="595" font-size="24" fill="#c4562f">同一个目标，不止一个答案</text></g>
+</svg>

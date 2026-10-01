@@ -21,7 +21,7 @@ const discussionUrl = `https://github.com/${settings.repo}/discussions`;
       data-theme-path={withBase('/giscus/')} data-theme-version="notebook-6"
       data-theme-site={(Astro.site ?? new URL(config.site.url)).href}
     >
-      <p class="meta" data-comment-status role="status">{en ? 'Comments load when you scroll here.' : '滚动到这里时加载评论。'}</p>
+      <p class="meta" data-comment-status role="status" hidden></p>
     </site-comments>
     <p class="meta comments-link"><a href={discussionUrl} target="_blank" rel="noopener noreferrer">{en ? 'View on GitHub ↗' : '在 GitHub 查看讨论 ↗'}</a></p>
     <noscript>{en ? 'Enable JavaScript to view comments, or visit GitHub.' : '开启 JavaScript 后可查看评论，也可通过链接访问 GitHub。'}</noscript>
@@ -64,7 +64,7 @@ const discussionUrl = `https://github.com/${settings.repo}/discussions`;
         if (loading) return;
         loading = true;
         observer.disconnect();
-        if (status) status.textContent = en ? 'Loading comments…' : '正在加载评论…';
+        if (status) { status.hidden = false; status.textContent = en ? 'Loading comments…' : '正在加载评论…'; }
         timeout = setTimeout(showFailure, 20000);
         try {
           await import('giscus');

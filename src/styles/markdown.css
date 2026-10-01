@@ -502,6 +502,8 @@ html[data-theme='dark'] .stamp {
 }
 @media (min-width: 1200px) {
   .layout-wide {
+    /* 加宽块与页边批注共用右侧空间，先排完前面的浮动批注，避免相互遮挡。 */
+    clear: right;
     width: calc(100% + 15rem);
     left: 0;
     transform: none;

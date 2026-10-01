@@ -12,11 +12,11 @@ const links = (names) => optional('links', '相关链接', 'object', {
 const common = [
   field('title', '标题'), date('date', '日期'), date('updated', '更新日期', false),
   optional('description', '摘要', 'text'), list('tags', '标签'),
-  field('draft', '草稿（开启时不出现在网站上）', 'boolean', { default: true }),
-  field('comments', '允许评论', 'boolean', { default: true, hint: '默认开启；关闭后不显示此篇评论区，已有讨论保留在 GitHub。需先在站点设置中配置 giscus。' }),
+  field('draft', '草稿', 'boolean', { default: true }),
+  field('comments', '允许评论', 'boolean', { default: true }),
 ];
 const series = optional('series', '合集', 'object', { fields: [field('name', '合集名称'), field('order', '篇目顺序', 'number', { value_type: 'int', min: 1 })] });
-const body = field('body', '正文', 'markdown', { required: false, hint: '工具栏可插入批注、便利贴、相片、折页、视频和嵌入页面；Markdown 写法见 docs/SYNTAX.md。上传的文件放进这篇文章旁边的 attachments 文件夹。' });
+const body = field('body', '正文', 'markdown', { required: false });
 const listing = {
   sortable_fields: { fields: ['date', 'title', 'updated'], default: { field: 'date', direction: 'descending' } },
   view_filters: { filters: [{ name: 'drafts', label: '草稿', field: 'draft', eq: true }, { name: 'published', label: '已发布', field: 'draft', ne: true }] },
@@ -88,23 +88,22 @@ export function makeCmsConfig({ repo, siteUrl, base = '/', theme }) {
           field('autoHideHeader', '下滚隐藏导航、上滚显示', 'boolean', { default: true }),
           field('comments', 'giscus 评论', 'object', { fields: [
             field('enabled', '全站启用评论', 'boolean', { default: true }),
-            optional('repo', '公开评论仓库', 'string', { hint: '用户名/仓库名。可与网站源码仓库不同。', pattern: ['^[\\w.-]+/[\\w.-]+$', '填写 用户名/仓库名'] }),
-            optional('repoId', '仓库 ID', 'string', { hint: 'giscus.app 生成的 data-repo-id，不是仓库名称。' }),
-            optional('category', '讨论分类', 'string', { hint: '建议使用 Announcements 公告分类。' }),
-            optional('categoryId', '分类 ID', 'string', { hint: 'giscus.app 生成的 data-category-id。四项都填好后才加载评论。' }),
+            optional('repo', '公开评论仓库', 'string', { placeholder: 'owner/repository', pattern: ['^[\\w.-]+/[\\w.-]+$', '填写 用户名/仓库名'] }),
+            optional('repoId', '仓库 ID', 'string', { placeholder: 'data-repo-id' }),
+            optional('category', '讨论分类', 'string', { placeholder: 'Announcements' }),
+            optional('categoryId', '分类 ID', 'string', { placeholder: 'data-category-id' }),
           ] }),
         ] },
         { name: 'site', label: '基本信息', file: 'src/data/site.json', format: 'json', fields: [
           field('title', '站点名称'), field('tagline', '副标题'), field('description', '站点简介', 'text'),
-          field('author', '作者'), field('url', '域名', 'string', { hint: '自定义域名在此设置；GitHub Pages 地址由部署自动识别。', pattern: ['^https?://.+', '请输入完整 URL'] }),
+          field('author', '作者'), field('url', '域名', 'string', { pattern: ['^https?://.+', '请输入完整 URL'] }),
           optional('github', 'GitHub 链接'), optional('email', '联系邮箱'),
-          { ...list('signoffs', '页脚结束语'), hint: '每次打开页面随机显示一句；留空则页脚不显示结束语。' },
         ] },
         { name: 'now', label: '最近在做', file: 'src/content/now/now.md', fields: [date('updated', '更新日期'), list('doing', '在做'), list('reading', '在读'), list('listening', '在听')] },
         { name: 'about', label: '关于页', icon: 'person', file: 'src/content/about/about.md', fields: [
-          { ...body, label: '自我介绍', hint: '关于页左侧的正文。联系方式来自“基本信息”。' },
-          optional('highlights', '这个站点有什么', 'list', { default: [], hint: '留空则自动列出已启用的板块及其简介。', fields: [field('title', '名称'), optional('desc', '一句话说明')] }),
-          optional('workbench', '工作台', 'object', { hint: '全部留空则关于页不显示工作台。', fields: [
+          { ...body, label: '自我介绍' },
+          optional('highlights', '这个站点有什么', 'list', { default: [], fields: [field('title', '名称'), optional('desc', '一句话说明')] }),
+          optional('workbench', '工作台', 'object', { fields: [
             optional('tools', '工具', 'list', { default: [], fields: [field('name', '名称'), optional('note', '备注')] }),
             optional('hardware', '硬件', 'list', { default: [], fields: [field('name', '名称'), optional('note', '备注')] }),
             list('questions', '正在追的问题'),

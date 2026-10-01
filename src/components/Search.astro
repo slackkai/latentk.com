@@ -183,7 +183,7 @@ import { t } from '../i18n';
     document.addEventListener("astro:before-swap", () => lifecycle?.abort(), { once: true, signal });
     const modalEl = modal, inputEl = input, listEl = list, hintEl = hint;
 
-    const failureHint = import.meta.env.DEV ? t.search.notBuilt : t.search.unavailable;
+    const failureHint = t.search.unavailable;
     let pf: PF | null = null;
     let loadFailed = false;
     let active = -1;

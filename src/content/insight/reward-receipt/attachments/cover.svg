@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">上有奖励，下有对策</title><desc id="desc">办公室机器人旁的两张小票：送到负十六分，掉下楼梯负六分。</desc>
+<defs><pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#d9dcd8"/></pattern></defs>
+<rect width="1200" height="675" fill="#f6f7f4"/><rect width="1200" height="675" fill="url(#dots)"/>
+<g font-family="'LXGW WenKai Screen','KaiTi',serif" fill="#1f2433"><text x="70" y="145" font-size="28" fill="#3b4f9e">一张奖励函数，四种歪办法</text><text x="65" y="239" font-size="58">上有奖励，</text><text x="65" y="322" font-size="58">下有对策。</text><text x="72" y="432" font-size="26" fill="#626773">它没有算错。</text><text x="72" y="474" font-size="26" fill="#626773">它只是照着你写的价目表做了。</text></g>
+<g transform="translate(598 147) rotate(-6)" stroke="#1f2433" stroke-width="3"><path d="M0 0H230V342l-20-12-20 12-20-12-20 12-20-12-20 12-20-12-20 12-20-12-20 12-30-12Z" fill="#fff"/>
+<g stroke="none" font-family="'KaiTi',serif" fill="#1f2433"><text x="28" y="48" font-size="24">你想的：送到</text><text x="28" y="115" font-size="22">咖啡送到 +10</text><text x="28" y="163" font-size="22">13 步 × −2</text><text x="28" y="275" font-size="38">合计 −16</text></g><path d="M24 208h182" stroke-dasharray="5 6"/></g>
+<g transform="translate(859 169) rotate(5)" stroke="#1f2433" stroke-width="3"><path d="M0 0H230V342l-20-12-20 12-20-12-20 12-20-12-20 12-20-12-20 12-20-12-20 12-30-12Z" fill="#e6ebfa"/>
+<g stroke="none" font-family="'KaiTi',serif" fill="#1f2433"><text x="25" y="48" font-size="24">它选的：收工</text><text x="25" y="115" font-size="22">送到 0</text><text x="25" y="163" font-size="22">3 步 × −2</text><text x="25" y="275" font-size="38" fill="#c4562f">合计 −6</text></g><path d="M24 208h182" stroke-dasharray="5 6"/></g>
+<text x="705" y="606" font-size="25" fill="#c4562f" font-family="'KaiTi',serif">分数最高 ≠ 事情办好</text>
+</svg>

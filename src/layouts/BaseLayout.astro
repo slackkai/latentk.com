@@ -15,11 +15,9 @@ interface Props {
   type?: 'website' | 'article';
   publishedTime?: Date;
   modifiedTime?: Date;
-  /** 页脚是否显示随机结束语 */
-  signoff?: boolean;
   searchIndex?: boolean;
 }
-const { signoff = true, searchIndex = false, ...head } = Astro.props;
+const { searchIndex = false, ...head } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const section = Astro.url.pathname.slice(base.length).split('/')[1];
 const hiddenSection = Object.hasOwn(config.sections, section) && !config.sections[section as keyof typeof config.sections].enabled;
@@ -39,7 +37,7 @@ const noindex = hiddenSection || section === '404' || section === 'drafts' || se
     <main id="main" transition:name="main" data-pagefind-body={searchIndex && !noindex || undefined} data-pagefind-ignore={noindex || undefined}>
       <slot />
     </main>
-    <Footer signoff={signoff} />
+    <Footer />
     <script>
       import '../scripts/prose';
     </script>

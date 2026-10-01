@@ -23,7 +23,7 @@
     <details><summary>展开这一拍的算式与两个参数</summary>
       <div class="controls"><label for="gain">回应程度 K：<output id="gain-value"></output><input id="gain" type="range" min="0.5" max="14" step="0.5" value="4"></label><label for="delay">延迟拍数：<output id="delay-value"></output><input id="delay" type="range" min="0" max="12" value="6"></label></div>
       <dl id="ledger"></dl>
-      <p class="limits">每拍 0.1 s，目标 1 m，速度限制 ±1.5 m/s。无噪声，无惯性、摩擦与电机动态；改变参数会重算整段轨迹，并保留当前查看的拍数。</p>
+      <p class="limits">每拍 0.1 s，目标 1 m，速度限制 ±1.5 m/s。无噪声，无惯性、摩擦与电机动态。</p>
     </details>
   </main>
   <noscript>本例第 7 拍：实际位置 1.05 m，延迟六拍收到的是第 1 拍的位置 0.15 m，仍给出 +1.5 m/s 的速度命令。正文保留了完整算式与复算表。</noscript>

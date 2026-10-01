@@ -21,7 +21,6 @@ export function localizeCms(value,language) {
     if(!node||typeof node!=='object')return;
     const key=node.name || node.id;
     if(node.label && labels[key])node.label=labels[key];
-    if(typeof node.hint==='string' && /\p{Script=Han}/u.test(node.hint))node.hint='See docs/THEME.md and docs/SYNTAX.md for details.';
     if(Array.isArray(node.pattern)&&typeof node.pattern[1]==='string'&&/\p{Script=Han}/u.test(node.pattern[1]))node.pattern[1]='Enter a valid value.';
     Object.values(node).forEach(visit);
   };

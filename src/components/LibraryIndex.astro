@@ -50,7 +50,7 @@ const types = [...new Set(items.map((i) => i.data.type))];
         <button class="hand-btn small" data-sort="rating" aria-pressed="false" aria-controls="lib-grid">{t.library.sortRating}</button>
         <button class="hand-btn small" data-sort="status" aria-pressed="false" aria-controls="lib-grid">{t.library.sortStatus}</button>
       </div>
-      <button class="hand-btn small" id="lib-random">{t.library.random}</button>
+      <button class="hand-btn small" id="lib-random" disabled={items.length === 0}>{t.library.random}</button>
     </div>
 
     <div class="grid" id="lib-grid">

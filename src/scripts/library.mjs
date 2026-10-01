@@ -41,6 +41,7 @@ export function mountLibrary(root, view) {
       const pages=Math.max(1,Math.ceil(selected.length/size));current=Math.max(1,Math.min(current,pages));
       grid.replaceChildren(...selected.slice((current-1)*size,current*size).map(card));
       empty.hidden=selected.length>0;
+      const random=root.querySelector('#lib-random');if(random)random.disabled=selected.length===0;
       const status=pagination.querySelector('[data-page-status]');status.textContent=`${current} / ${pages}`;
       for(const direction of ['prev','next']){const a=pagination.querySelector(`[data-page-${direction}]`);a.hidden=direction==='prev'?current===1:current===pages;a.href='#lib-grid';}
       pagination.hidden=pages===1;

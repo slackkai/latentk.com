@@ -1,0 +1,522 @@
+/* 可触摸插图的样式。颜色全部来自站点同步进 iframe 的变量（--paper、--pencil、--marker …），
+   下面的值只是独立打开时的回退。深色模式和配色由站点写到 <html data-theme data-palette>。
+   画风照首页 Hero 的机械臂：4px 铅笔线、6px 连杆、白心关节、marker 色夹爪和虚线十字靶。 */
+:root {
+  --paper: #f6f7f4;
+  --paper-2: #ffffff;
+  --erased: #e0e3e0;
+  --pencil: #1f2433;
+  --pencil-60: rgba(31, 36, 51, 0.6);
+  --pencil-45: rgba(31, 36, 51, 0.45);
+  --pencil-25: rgba(31, 36, 51, 0.25);
+  --pencil-12: rgba(31, 36, 51, 0.12);
+  --marker: #c4562f;
+  --pen: #3b4f9e;
+  --postit: #e6ebfa;
+  --postit-2: #dcefe4;
+  --postit-3: #f8e5dc;
+  --tape: rgba(255, 236, 150, 0.7);
+  --font-body: 'LXGW WenKai Screen', 'KaiTi', 'STKaiti', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'LXGW WenKai Screen', monospace;
+  --radius-wobble-sm: 180px 15px 180px 15px / 15px 180px 15px 180px;
+  --radius-pill: 999px 18px 999px 18px / 18px 999px 18px 999px;
+  --shadow-soft: 3px 3px 0 0 rgba(31, 36, 51, 0.1);
+  --shadow-hand-sm: 2px 2px 0 0 var(--pencil);
+  color-scheme: light;
+}
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: transparent;
+}
+body {
+  font-family: var(--font-body);
+  color: var(--pencil);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px dashed var(--marker);
+  outline-offset: 2px;
+}
+
+/* ---------- 一张图：点阵纸上左边画、右边一张小卡片，底下一句「你看到的是什么」 ---------- */
+.fig {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 11.5rem;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: 'stage head' 'stage body' 'note note';
+  gap: 0.45rem 0.9rem;
+  padding: 0.6rem 0.8rem 0.65rem;
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--erased) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.fig-stage {
+  grid-area: stage;
+  align-self: center;
+  min-width: 0;
+}
+.fig-head,
+.fig-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  min-width: 0;
+}
+.fig-head {
+  grid-area: head;
+  padding-top: 0.2rem;
+}
+.fig-body {
+  grid-area: body;
+}
+.fig-tag {
+  padding: 0 0.6rem;
+  border: 2px solid var(--pencil);
+  border-radius: var(--radius-wobble-sm);
+  background: var(--postit);
+  font-size: 0.82rem;
+  transform: rotate(-2deg);
+}
+.fig-hint {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--pencil-60);
+}
+/* 读数：一张小白卡，数字用等宽，拖动时不左右跳 */
+.fig-readout {
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  background: var(--paper-2);
+  border: 2px solid var(--pencil);
+  border-radius: 12px 18px 14px 16px / 16px 14px 18px 12px;
+  box-shadow: var(--shadow-soft);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+.fig-readout:empty {
+  display: none;
+}
+.fig-readout .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+.fig-readout .k {
+  color: var(--pencil-60);
+}
+.fig-readout .v {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.fig-readout .row.is-big .v {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.fig-readout .row.is-hot .v {
+  color: var(--marker);
+  font-weight: 700;
+}
+/* 底下那句话：留够两行，文字长短变化时 iframe 高度不跳 */
+.fig-note {
+  grid-area: note;
+  margin: 0;
+  min-height: 3.2em;
+  padding: 0.1rem 0.2rem 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.fig-note b {
+  color: var(--marker);
+}
+
+/* ---------- 控件：胶囊按钮、手绘开关、手绘滑块 ---------- */
+.fig-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.5rem;
+  width: 100%;
+}
+.fig-controls:empty {
+  display: none;
+}
+.fig-btn {
+  padding: 0.05rem 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  background: var(--paper-2);
+  border: 2px solid var(--pencil);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-hand-sm);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease;
+}
+.fig-btn:hover {
+  background: var(--marker);
+  color: #fff;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 var(--pencil);
+}
+.fig-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+.fig-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  background: var(--paper-2);
+  color: var(--pencil);
+  transform: none;
+  box-shadow: var(--shadow-hand-sm);
+}
+.fig-btn.is-quiet {
+  border-width: 1.5px;
+  box-shadow: none;
+}
+.fig-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0;
+  font-size: 0.86rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.fig-toggle .box {
+  position: relative;
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  background: var(--paper-2);
+  border: 2px solid var(--pencil);
+  border-radius: 4px 6px 3px 5px;
+  box-shadow: 1.5px 1.5px 0 0 var(--pencil);
+}
+.fig-toggle[aria-pressed='true'] .box {
+  background: var(--postit-2);
+}
+/* 勾：两条边的 L 形转 45°，像随手打的钩 */
+.fig-toggle[aria-pressed='true'] .box::after {
+  content: '';
+  position: absolute;
+  left: 0.22rem;
+  top: -0.2rem;
+  width: 0.4rem;
+  height: 0.8rem;
+  border: solid var(--marker);
+  border-width: 0 3px 3px 0;
+  border-radius: 1px 1px 3px 1px;
+  transform: rotate(40deg);
+}
+.fig-toggle:hover .box {
+  transform: translate(1px, 1px);
+  box-shadow: 0.5px 0.5px 0 0 var(--pencil);
+}
+.fig-slider {
+  display: flex;
+  flex: 1 1 9.5rem;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+  font-size: 0.86rem;
+}
+.fig-slider .head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.fig-slider .val {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--marker);
+}
+/* 滑块自己画：铅笔描边的轨道，左边涂上便签色，拇指是一颗歪一点的白纽扣 */
+.fig-slider input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1.5rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.fig-slider input[type='range']::-webkit-slider-runnable-track {
+  box-sizing: border-box;
+  height: 0.75rem;
+  border: 2px solid var(--pencil);
+  border-radius: 999px 12px 999px 12px / 12px 999px 12px 999px;
+  background: linear-gradient(to right, var(--postit-3) 0 var(--fill, 50%), var(--paper-2) var(--fill, 50%));
+}
+.fig-slider input[type='range']::-moz-range-track {
+  box-sizing: border-box;
+  height: 0.75rem;
+  border: 2px solid var(--pencil);
+  border-radius: 999px 12px 999px 12px / 12px 999px 12px 999px;
+  background: linear-gradient(to right, var(--postit-3) 0 var(--fill, 50%), var(--paper-2) var(--fill, 50%));
+}
+.fig-slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: calc((0.75rem - 4px - 1.15rem) / 2);
+  background: var(--paper-2);
+  border: 2px solid var(--pencil);
+  border-radius: 55% 45% 50% 50% / 45% 55% 45% 55%;
+  box-shadow: 1.5px 1.5px 0 0 var(--pencil);
+}
+.fig-slider input[type='range']::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 1.15rem;
+  height: 1.15rem;
+  background: var(--paper-2);
+  border: 2px solid var(--pencil);
+  border-radius: 55% 45% 50% 50% / 45% 55% 45% 55%;
+  box-shadow: 1.5px 1.5px 0 0 var(--pencil);
+}
+.fig-slider input[type='range']:hover::-webkit-slider-thumb {
+  background: var(--marker);
+}
+.fig-slider input[type='range']:hover::-moz-range-thumb {
+  background: var(--marker);
+}
+.fig-slider input[type='range']:focus-visible {
+  outline: 2px dashed var(--marker);
+  outline-offset: 3px;
+}
+
+/* ---------- SVG：和首页机械臂同一支笔 ---------- */
+.fig-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  fill: none;
+  stroke: var(--pencil);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.fig-svg text {
+  fill: var(--pencil-60);
+  stroke: none;
+  font-family: var(--font-body);
+  font-size: 15px;
+}
+.fig-svg text.is-strong {
+  fill: var(--pencil);
+  font-weight: 700;
+}
+.fig-svg text.is-marker {
+  fill: var(--marker);
+}
+.fig-svg text.is-pen {
+  fill: var(--pen);
+}
+.arm-base .joint,
+.arm .joint {
+  fill: var(--paper-2);
+}
+.arm .link {
+  stroke-width: 6;
+}
+.arm .tip {
+  fill: var(--marker);
+}
+/* 影子手臂：另一个解、上一步、残影。细虚线，不抢主角 */
+.arm.is-ghost {
+  stroke: var(--pencil-45);
+  stroke-width: 2.5;
+  stroke-dasharray: 5 5;
+}
+.arm.is-ghost .link {
+  stroke-width: 3;
+}
+.arm.is-ghost .joint {
+  fill: var(--paper);
+  stroke-dasharray: none;
+}
+.arm.is-ghost .tip {
+  fill: var(--pencil-25);
+  stroke: none;
+}
+.arm.is-faint {
+  stroke: var(--pencil-25);
+  stroke-dasharray: none;
+}
+.arm.is-faint .joint {
+  stroke: var(--pencil-25);
+}
+.arm.is-dim {
+  opacity: 0.45;
+}
+.target {
+  stroke: var(--marker);
+  stroke-width: 2.5;
+  stroke-dasharray: 4 3;
+}
+/* 辅助线：指尖轨迹、构造线、角度弧、可达区域 */
+.trail {
+  stroke: var(--pen);
+  stroke-width: 2.5;
+  stroke-dasharray: 1 6;
+}
+.guide {
+  stroke: var(--pencil-25);
+  stroke-width: 2;
+  stroke-dasharray: 4 6;
+}
+.guide.is-pen {
+  stroke: var(--pen);
+  opacity: 0.75;
+}
+.guide.is-marker {
+  stroke: var(--marker);
+}
+.angle {
+  stroke: var(--pen);
+  stroke-width: 2.5;
+}
+.angle.is-marker {
+  stroke: var(--marker);
+}
+.zone {
+  fill: var(--postit-2);
+  fill-rule: evenodd;
+  stroke: var(--pencil-25);
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+}
+.zone.is-pen {
+  fill: var(--postit);
+}
+.zone.is-hot {
+  fill: var(--postit-3);
+}
+.ray {
+  stroke-width: 2.5;
+  stroke-dasharray: 6 5;
+}
+.ray.is-tip {
+  stroke: var(--pen);
+}
+.ray.is-target {
+  stroke: var(--marker);
+}
+.vec {
+  stroke-width: 3;
+}
+.vec.is-pen {
+  stroke: var(--pen);
+}
+.vec.is-marker {
+  stroke: var(--marker);
+}
+.active-ring {
+  stroke: var(--marker);
+  stroke-width: 3;
+}
+
+/* ---------- 拖动柄：透明的大触摸区 + 一圈虚线提示「这里能拖」 ---------- */
+.handle {
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+.handle.is-dragging {
+  cursor: grabbing;
+}
+.handle .hit {
+  fill: transparent;
+  stroke: none;
+}
+.handle .ring {
+  stroke: var(--marker);
+  stroke-width: 2;
+  stroke-dasharray: 3 4;
+  opacity: 0.55;
+}
+.handle:hover .ring,
+.handle.is-dragging .ring {
+  opacity: 1;
+}
+.handle:focus-visible .ring {
+  opacity: 1;
+  stroke-width: 2.5;
+  stroke-dasharray: 5 3;
+}
+/* 靶子自己就是虚线圆，平时不再加一圈；键盘聚焦时才出现 */
+.handle.is-target .ring {
+  opacity: 0;
+}
+.handle.is-target:focus-visible .ring {
+  opacity: 1;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- 窄：卡片落到图下面 ---------- */
+@media (max-width: 520px) {
+  .fig {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: 'head' 'stage' 'body' 'note';
+    padding: 0.55rem 0.55rem 0.6rem;
+  }
+  .fig-head {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.2rem 0.6rem;
+    padding-top: 0;
+  }
+  .fig-note {
+    min-height: 4.8em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

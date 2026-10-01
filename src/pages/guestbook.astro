@@ -1,5 +1,6 @@
 ---
 import { t } from '../i18n';
+import { withBase } from '../utils/url';
 /**
  * 留言：一张手绘信纸，提交后通过 Web3Forms 发到站长邮箱，不公开展示。
  */
@@ -11,12 +12,10 @@ const ready = WEB3FORMS_KEY.length > 0;
 
 <BaseLayout title={t.guestbook.pageTitle} description={t.guestbook.pageDesc(SITE.author)}>
   <section class="container section">
-    <span class="postit reveal" style="--i:0">{t.guestbook.badge}</span>
-    <h1 class="page-title reveal" style="--i:1">Guestbook</h1>
-    <p class="page-desc reveal" style="--i:2">{t.guestbook.desc}</p>
+    <h1 class="page-title reveal" style="--i:1">{t.guestbook.pageTitle}</h1>
 
     <div class="letter-wrap reveal" style="--i:3">
-      <form data-sending={t.guestbook.sending} data-thanks={t.guestbook.thanks} data-failed={t.guestbook.failed('{error}')} data-network-error={t.guestbook.networkError} class="letter" id="letter" data-key={WEB3FORMS_KEY} data-site={SITE.title} novalidate>
+      {ready ? (<form data-sending={t.guestbook.sending} data-thanks={t.guestbook.thanks} data-failed={t.guestbook.failed} class="letter" id="letter" data-key={WEB3FORMS_KEY} data-site={SITE.title} novalidate>
         <div class="stamp" aria-hidden="true">
           <svg viewBox="0 0 60 60">
             <rect x="4" y="4" width="52" height="52" rx="3" stroke-dasharray="3 3" />
@@ -42,16 +41,14 @@ const ready = WEB3FORMS_KEY.length > 0;
         <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" />
 
         <div class="letter-foot">
-          <p class="meta" id="letter-status" aria-live="polite">
-            {ready ? t.guestbook.readyHint : t.guestbook.notConfigured}
-          </p>
+          <p class="meta" id="letter-status" aria-live="polite" hidden></p>
           <button class="hand-btn" type="submit" id="letter-send" disabled={!ready}>{t.guestbook.send}</button>
         </div>
 
         <div class="sent" id="letter-sent" hidden aria-hidden="true">
           <span class="sent-stamp">{t.guestbook.sentStamp}</span>
         </div>
-      </form>
+      </form>) : <a class="hand-btn" href={withBase(SITE.email ? `mailto:${SITE.email}` : '/about/')}>{t.about.contact} →</a>}
     </div>
   </section>
 </BaseLayout>
@@ -234,6 +231,7 @@ const ready = WEB3FORMS_KEY.length > 0;
       };
       form.classList.add('is-sending');
       btnEl.disabled = true;
+      statusEl.hidden = false;
       statusEl.textContent = form.dataset.sending || 'Sending…';
       try {
         const res = await fetch('https://api.web3forms.com/submit', {
@@ -246,11 +244,12 @@ const ready = WEB3FORMS_KEY.length > 0;
         form.classList.remove('is-sending');
         sentEl.hidden = false;
         statusEl.textContent = form.dataset.thanks || 'Thank you.';
+        statusEl.classList.add('sr-only');
         form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach((el) => (el.disabled = true));
-      } catch (err) {
+      } catch {
         form.classList.remove('is-sending');
         btnEl.disabled = false;
-        statusEl.textContent = (form.dataset.failed || '{error}').replace('{error}',err instanceof Error ? err.message : (form.dataset.networkError || 'Network error'));
+        statusEl.textContent = form.dataset.failed || 'Not sent. Please try again.';
       }
     });
   }

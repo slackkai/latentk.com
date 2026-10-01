@@ -26,7 +26,7 @@ const label = (c: string) => (c in SECTIONS ? SECTIONS[c as SectionKey] : { emoj
   <section class="container section">
     <span class="postit">📝 仅本地可见</span>
     <h1 class="page-title">Drafts</h1>
-    <p class="page-desc">{drafts.length} 篇草稿。frontmatter 里 draft: true 的内容只在 dev 下显示，生产构建会跳过。</p>
+    <p class="page-desc">{drafts.length} 篇草稿。</p>
     <div class="grid">
       {
         drafts.map((e, i) => (
