@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "academic": {
+      "enabled": false
+    },
+    "insight": {
+      "enabled": true
+    },
+    "dailies": {
+      "enabled": false
+    },
+    "library": {
+      "enabled": false
+    },
+    "projects": {
+      "enabled": false
+    }
+  }
+}
